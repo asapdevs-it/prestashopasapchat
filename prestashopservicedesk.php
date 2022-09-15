@@ -1,0 +1,465 @@
+<?php
+/**
+* 2007-2022 PrestaShop
+*
+* NOTICE OF LICENSE
+*
+* This source file is subject to the Academic Free License (AFL 3.0)
+* that is bundled with this package in the file LICENSE.txt.
+* It is also available through the world-wide-web at this URL:
+* http://opensource.org/licenses/afl-3.0.php
+* If you did not receive a copy of the license and are unable to
+* obtain it through the world-wide-web, please send an email
+* to license@prestashop.com so we can send you a copy immediately.
+*
+* DISCLAIMER
+*
+* Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+* versions in the future. If you wish to customize PrestaShop for your
+* needs please refer to http://www.prestashop.com for more information.
+*
+*  @author    PrestaShop SA <contact@prestashop.com>
+*  @copyright 2007-2022 PrestaShop SA
+*  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+*  International Registered Trademark & Property of PrestaShop SA
+*/
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+class Prestashopservicedesk extends Module
+{
+    protected $config_form = false;
+
+    public function __construct()
+    {
+        $this->name = 'prestashopservicedesk';
+        $this->tab = 'administration';
+        $this->version = '1.0.0';
+        $this->author = 'SD20';
+        $this->need_instance = 1;
+
+        /**
+         * Set $this->bootstrap to true if your module is compliant with bootstrap (PrestaShop 1.6)
+         */
+        $this->bootstrap = true;
+
+        parent::__construct();
+
+        $this->displayName = $this->l('Service Desk 2.0');
+        $this->description = $this->l('Plugin for Service Desk 2.0');
+
+        $this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
+
+    }
+
+    /**
+     * Don't forget to create update methods if needed:
+     * http://doc.prestashop.com/display/PS16/Enabling+the+Auto-Update
+     */
+    public function install()
+    {
+        Configuration::updateValue('PRESTASHOPSERVICEDESK_LIVE_MODE', false);
+
+        include(dirname(__FILE__).'/sql/install.php');
+
+        return parent::install() &&
+            $this->registerHook('header') &&
+            $this->registerHook('backOfficeHeader') &&
+            $this->registerHook('actionAttributePostProcess') &&
+            $this->registerHook('moduleRoutes');
+    }
+
+    public function prepare_order_for_response($order){
+        $order = (object) $order;
+        // var_dump($order);
+        $idlang = intval($order->id_lang);
+        $order_id = isset($order->id) ? $order->id : $order->id_order;
+
+        $delivery_details = new Address((int)($order->id_address_delivery));
+        $customer = new Customer((int)($delivery_details->id_customer));
+        $addressInvoice = new Address(intval($order->id_address_invoice));
+        $carrier = new Carrier(intval($order->id_carrier), $idlang);
+        $total = $order->total_paid;
+        $is_paid = $total <= $order->total_paid_real;
+        $products_total = $order->total_products;
+        $status_obj = new OrderState($order->current_state,$idlang );
+        $status = $status_obj->name;
+        // ->getOrderStates(intval($order->id_lang));
+
+		$billing_address = $addressInvoice->address1." ".$addressInvoice->address2.", ".$addressInvoice->postcode." ".$addressInvoice->city;
+        $delivery_method = $carrier->name;
+		$delivery_address = $delivery_details->address1." ".$delivery_details->address2.", ".$delivery_details->postcode." ".$delivery_details->city;
+		$product_list = [];
+        $ProductDetailObject = new OrderDetail;
+        $items = $ProductDetailObject->getList($order_id);
+
+		foreach ($items as $item) {
+			// $product = $item->get_product();
+            $product_name = $item['product_name'];
+			$sku = $item['product_id'];
+			// $sku = $sku ? $sku : $item->get_id();
+			$qty = $item['product_quantity'];
+			$total_price = $item['total_price_tax_incl'];
+			$price = number_format(($total_price/$qty), 2);
+
+			$product_list[] =[
+				"name"=>$product_name,
+				"sku"=>$sku,
+				"price"=>$price,
+				"amount"=>$qty,
+				"total"=>$total_price,
+			];
+		}
+
+
+		return [
+			"order_number"=>$order_id,
+			"is_paid"=> $is_paid,
+            "client_name"=>$customer->firstname." ".$customer->lastname,
+			"client_email"=>$customer->email,
+			"product_list"=>$product_list,
+			"total_price"=>$total,
+			"current_status"=>$status,            
+		//    //  "statuses_history"=><Array>[
+		//    //  "name"=><String>,
+		//    //  "date"=><Date format "Y-m-d H=>i=>s">,
+		//    //  ],
+		//    //  "lading_number"=><String>,
+			"client_phone"=>$delivery_details->phone ? $delivery_details->phone : $delivery_details->phone_mobile,
+			"delivery_address"=>$delivery_address,
+			"billing_address"=>$billing_address,
+			"delivery_method"=>$delivery_method,
+			"payment_method"=>$order->payment,
+
+            // "addressInvoice"=>$addressInvoice, //dd
+            // "delivery_details"=>$delivery_details, //dd
+            // "customer"=>$customer, //dd
+            // "order"=>$order,//dd
+            // "items"=>$items
+		   ];
+	}
+
+	public function get_order_response($order, $type_shop){
+		$order_arr = $this->prepare_order_for_response($order);
+
+		return [
+			"message"=>"Success",
+			"data"=> $order_arr,
+			"type"=> $type_shop 
+		];
+	}
+
+	public function getOneOrderByNumber($order_number){
+		// $order = wc_get_order($order_number);
+        $order = new Order($order_number);  
+		$type_shop = $this->get_type_shop();
+
+		if(!$order) return [
+			"message"=>"Error",
+			"data"=>"Empty",
+			"type"=> $type_shop 
+		];
+		return $this->get_order_response($order, $type_shop);
+	}
+
+	public function getAllOrdersByEmail($email){	
+		$type_shop = $this->get_type_shop();
+        
+        $orders = [];
+        $customer_id = Customer::customerExists($email, true);
+        if ($customer_id) {
+            $customer = new Customer($customer_id);
+            $orders = Order::getCustomerOrders($customer_id);
+        }
+
+		if(!$orders || !count($orders)) return [
+			"message"=>"Error",
+			"data"=>"Empty",
+			"type"=> $type_shop 
+		];
+
+		
+		$orders_list = [];
+
+		foreach ($orders as $order) {
+			$orders_list[] = $this->prepare_order_for_response($order);
+		}
+		$response = [
+			"message"=>"Success",
+			"data"=> $orders_list,
+			"type"=> $type_shop 
+		];
+		return $response;
+	}
+
+    public function get_type_shop(){
+        return "prestashop";
+    }
+    
+    public function get_api_key(){
+        // $value = get_option("api_key_sd");
+        $value = Configuration::get('PRESTASHOPSERVICEDESK_API_SD', 0);
+        return $value;
+    }
+    
+    public function returnError($error = false){      
+        // $order = new Order(6);  
+        // $test = $this->prepare_order_for_response($order);
+        // $test = $this->getAllOrdersByEmail("kontakt@kamilperzowski.pl");
+        // $test = $this->getOneOrderByNumber(6);
+        $response = [
+            "message"=>"Error",
+            "data"=>$error ? $error : "Brak route/key/mode",
+            "type"=>$this->get_type_shop(),
+            // "test"=>$test
+        ];
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode($response);
+        exit;
+    }
+    
+    public function retrieveJsonPostData() {
+        $rawData = file_get_contents("php://input");
+        // return json_decode($rawData);
+        parse_str($rawData, $result);
+        return $result;
+    }
+
+    public function checkConnection($isAuth, $shop_type){
+        return [
+            "message"=>$isAuth ? "Success" : "Error",
+            "data"=>$isAuth ? "Aktywacja prawidłowa" : "Błąd klucza sklepu",
+            "type"=>$shop_type
+        ];
+    }
+
+    public function check_auth($keyBearer, $keySD){
+        $isAuth = $keyBearer === $keySD;
+        return $isAuth;
+    }
+
+
+    public function hookModuleRoutes($params) {
+        $request = $_SERVER['REQUEST_URI'];
+        $isRouteSd = strpos( $request, 'servicedesk/api' ) !== false;
+        if(!$isRouteSd) return;
+
+        $method = $_SERVER['REQUEST_METHOD'];
+	    $headers = getallheaders(); 
+        $response = [];
+
+        $keyBearer = trim(isset($headers['Authorization']) ? str_replace("Bearer", "", $headers['Authorization']) : "");
+        $data = $this->retrieveJsonPostData();
+        $mode = isset($data["mode"]) ? $data["mode"] : false;
+        $email = isset($data["email"]) ? $data["email"] : false;
+        $order_number = isset($data["order_number"]) ? $data["order_number"] : false;
+    
+        if(!$keyBearer || !$mode) return $this->returnError();
+    
+        $keySDpresta = $this->get_api_key();
+        $isAuth = $this->check_auth($keyBearer, $keySDpresta);
+        $shop_type = $this->get_type_shop();
+    
+ 
+        if(!$isAuth) return $this->returnError("Błąd autoryzacji");
+
+        switch ($mode) {
+            case 'checkConnection':
+                $response = $this->checkConnection($isAuth, $shop_type);
+                break;
+    
+            case 'getOneOrderByNumber':
+                $response = $this->getOneOrderByNumber($order_number);
+            break;
+    
+            case 'getAllOrdersByEmail':
+                $response = $this->getAllOrdersByEmail($email);
+            break;
+            
+            default:
+                # code...
+                break;
+        }
+
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode($response);
+        exit;
+
+        //metoda z hookiem nie dzialala
+        // return array(
+        //     'module-prestashopservicedesk-ServiceDeskApi' => array( 
+        //         'controller' => 'ServiceDeskApi', //front controller name
+        //         'rule' => '/servicedesk/api', //the desired page URL
+        //         'keywords' => array(
+        //         ),
+        //         'params' => array(
+        //             'fc' => 'module',
+        //             'module' => 'prestashopservicedesk', //module name
+        //             'controller' => 'ServiceDeskApi'
+        //         )
+        //     ),
+        // );
+    }
+
+
+    public function uninstall()
+    {
+        Configuration::deleteByName('PRESTASHOPSERVICEDESK_LIVE_MODE');
+
+        include(dirname(__FILE__).'/sql/uninstall.php');
+
+        return parent::uninstall();
+    }
+
+    /**
+     * Load the configuration form
+     */
+    public function getContent()
+    {
+        /**
+         * If values have been submitted in the form, process.
+         */
+        if (((bool)Tools::isSubmit('submitPrestashopservicedeskModule')) == true) {
+            $this->postProcess();
+        }
+
+        $this->context->smarty->assign('module_dir', $this->_path);
+        $this->context->smarty->assign('formsd',  $this->renderForm());
+
+        $output = $this->context->smarty->fetch($this->local_path.'views/templates/admin/configure.tpl');
+        return $output;
+    }
+
+    /**
+     * Create the form that will be displayed in the configuration of your module.
+     */
+    protected function renderForm()
+    {
+        $helper = new HelperForm();
+
+        $helper->show_toolbar = false;
+        $helper->table = $this->table;
+        $helper->module = $this;
+        $helper->default_form_language = $this->context->language->id;
+        $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG', 0);
+
+        $helper->identifier = $this->identifier;
+        $helper->submit_action = 'submitPrestashopservicedeskModule';
+        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false)
+            .'&configure='.$this->name.'&tab_module='.$this->tab.'&module_name='.$this->name;
+        $helper->token = Tools::getAdminTokenLite('AdminModules');
+
+        $helper->tpl_vars = array(
+            'fields_value' => $this->getConfigFormValues(), /* Add values for your inputs */
+            'languages' => $this->context->controller->getLanguages(),
+            'id_language' => $this->context->language->id,
+        );
+
+        return $helper->generateForm(array($this->getConfigForm()));
+    }
+
+    /**
+     * Create the structure of your form.
+     */
+    protected function getConfigForm()
+    {
+        return array(
+            'form' => array(
+                'legend' => array(
+                'title' => $this->l('Ustawienia Service Desk'),
+                'icon' => 'icon-cogs',
+                ),
+                'input' => array(
+                    // array(
+                    //     'type' => 'switch',
+                    //     'label' => $this->l('Live mode'),
+                    //     'name' => 'PRESTASHOPSERVICEDESK_LIVE_MODE',
+                    //     'is_bool' => true,
+                    //     'desc' => $this->l('Use this module in live mode'),
+                    //     'values' => array(
+                    //         array(
+                    //             'id' => 'active_on',
+                    //             'value' => true,
+                    //             'label' => $this->l('Enabled')
+                    //         ),
+                    //         array(
+                    //             'id' => 'active_off',
+                    //             'value' => false,
+                    //             'label' => $this->l('Disabled')
+                    //         )
+                    //     ),
+                    // ),
+                    array(
+                        'col' => 3,
+                        'type' => 'text',
+                        'prefix' => '<i class="icon icon-gear"></i>',
+                        'desc' => $this->l('Podaj klucz SD wygenerowany w Service Desk'),
+                        'name' => 'PRESTASHOPSERVICEDESK_API_SD',
+                        'label' => $this->l('Klucz SD'),
+                    ),
+                    // array(
+                    //     'type' => 'password',
+                    //     'name' => 'PRESTASHOPSERVICEDESK_ACCOUNT_PASSWORD',
+                    //     'label' => $this->l('Password'),
+                    // ),
+                ),
+                'submit' => array(
+                    'title' => $this->l('Save'),
+                ),
+            ),
+        );
+    }
+
+    /**
+     * Set values for the inputs.
+     */
+    protected function getConfigFormValues()
+    {
+        return array(
+            'PRESTASHOPSERVICEDESK_LIVE_MODE' => Configuration::get('PRESTASHOPSERVICEDESK_LIVE_MODE', true),
+            'PRESTASHOPSERVICEDESK_API_SD' => Configuration::get('PRESTASHOPSERVICEDESK_API_SD', 'contact@prestashop.com'),
+            'PRESTASHOPSERVICEDESK_ACCOUNT_PASSWORD' => Configuration::get('PRESTASHOPSERVICEDESK_ACCOUNT_PASSWORD', null),
+            'PRESTASHOPSERVICEDESK_API_KEY' => Configuration::get('PRESTASHOPSERVICEDESK_API_KEY', "przykladowykey"),
+        );
+    }
+
+    /**
+     * Save form data.
+     */
+    protected function postProcess()
+    {
+        $form_values = $this->getConfigFormValues();
+
+        foreach (array_keys($form_values) as $key) {
+            Configuration::updateValue($key, Tools::getValue($key));
+        }
+    }
+
+    /**
+    * Add the CSS & JavaScript files you want to be loaded in the BO.
+    */
+    public function hookBackOfficeHeader()
+    {
+        if (Tools::getValue('module_name') == $this->name) {
+            $this->context->controller->addJS($this->_path.'views/js/back.js');
+            $this->context->controller->addCSS($this->_path.'views/css/back.css');
+        }
+    }
+
+    /**
+     * Add the CSS & JavaScript files you want to be added on the FO.
+     */
+    public function hookHeader()
+    {
+        $this->context->controller->addJS($this->_path.'/views/js/front.js');
+        $this->context->controller->addCSS($this->_path.'/views/css/front.css');
+    }
+
+    public function hookActionAttributePostProcess()
+    {
+        /* Place your code here. */
+        var_dump("tu");
+    }
+}
