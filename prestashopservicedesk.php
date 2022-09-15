@@ -207,7 +207,7 @@ class Prestashopservicedesk extends Module
     public function returnError($error = false){      
         // $order = new Order(6);  
         // $test = $this->prepare_order_for_response($order);
-        // $test = $this->getAllOrdersByEmail("kontakt@kamilperzowski.pl");
+        // $test = $this->getAllOrdersByEmail("");
         // $test = $this->getOneOrderByNumber(6);
         $response = [
             "message"=>"Error",
