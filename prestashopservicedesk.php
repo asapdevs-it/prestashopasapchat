@@ -222,9 +222,9 @@ class Prestashopservicedesk extends Module
     
     public function retrieveJsonPostData() {
         $rawData = file_get_contents("php://input");
-        // return json_decode($rawData);
         parse_str($rawData, $result);
-        return $result;
+        $data = json_decode($rawData) && json_decode($rawData)->mode ? json_decode($rawData) : $result;
+        return $data;
     }
 
     public function checkConnection($isAuth, $shop_type){
@@ -251,16 +251,26 @@ class Prestashopservicedesk extends Module
         $response = [];
 
         $keyBearer = trim(isset($headers['Authorization']) ? str_replace("Bearer", "", $headers['Authorization']) : "");
-        $data = $this->retrieveJsonPostData();
+        $data = (array) $this->retrieveJsonPostData();
         $mode = isset($data["mode"]) ? $data["mode"] : false;
         $email = isset($data["email"]) ? $data["email"] : false;
         $order_number = isset($data["order_number"]) ? $data["order_number"] : false;
+
+        // $response = [
+        //     "method"=> $method,
+        //     "data"=>$data
+        // ];
+        // header('Content-Type: application/json; charset=utf-8');
+        // echo json_encode($response);
+        // exit;
     
         if(!$keyBearer || !$mode) return $this->returnError();
     
         $keySDpresta = $this->get_api_key();
         $isAuth = $this->check_auth($keyBearer, $keySDpresta);
         $shop_type = $this->get_type_shop();
+
+     
     
  
         if(!$isAuth) return $this->returnError("Błąd autoryzacji");
