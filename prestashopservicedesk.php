@@ -223,6 +223,8 @@ class Prestashopservicedesk extends Module
     public function retrieveJsonPostData() {
         $rawData = file_get_contents("php://input");
         parse_str($rawData, $result);
+        if(isset($_POST['mode']) && $_POST['mode']) return $_POST;
+        
         $data = json_decode($rawData) && json_decode($rawData)->mode ? json_decode($rawData) : $result;
         return $data;
     }
@@ -258,6 +260,8 @@ class Prestashopservicedesk extends Module
 
         // $response = [
         //     "method"=> $method,
+        //     "post"=>$_POST,
+        //     "raw"=> $rawData = file_get_contents("php://input"),
         //     "data"=>$data
         // ];
         // header('Content-Type: application/json; charset=utf-8');
