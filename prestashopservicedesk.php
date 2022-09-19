@@ -27,6 +27,7 @@
 if (!defined('_PS_VERSION_')) {
     exit;
 }
+error_reporting(error_reporting() & ~E_NOTICE);
 
 class Prestashopservicedesk extends Module
 {
