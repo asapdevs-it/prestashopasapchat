@@ -169,7 +169,9 @@ class Prestashopasapchat extends Module
 		$type_shop = $this->get_type_shop();
         
         $orders = [];
-        $customer_id = Customer::customerExists($email, true);
+        $customer_id_sql_first = Db::getInstance()->getRow('SELECT id_customer FROM '._DB_PREFIX_.'customer WHERE email = "'.pSQL($email).'"');
+        $customer_id = $customer_id_sql_first['id_customer'];
+        // $customer_id = Customer::customerExists($email, true);
         if ($customer_id) {
             $customer = new Customer($customer_id);
             $orders = Order::getCustomerOrders($customer_id);
@@ -255,19 +257,34 @@ class Prestashopasapchat extends Module
 
         $keyBearer = trim(isset($headers['Authorization']) ? str_replace("Bearer", "", $headers['Authorization']) : "");
         $data = (array) $this->retrieveJsonPostData();
-        $mode = isset($data["mode"]) ? $data["mode"] : false;
-        $email = isset($data["email"]) ? $data["email"] : false;
-        $order_number = isset($data["order_number"]) ? $data["order_number"] : false;
+        $mode = isset($data["mode"]) ? $data["mode"] : (isset($_GET["mode"]) ? $_GET["mode"] : false);
+        $email = isset($data["email"]) ? $data["email"] : (isset($_GET["email"]) ? $_GET["email"] : false);
 
-        // $response = [
-        //     "method"=> $method,
-        //     "post"=>$_POST,
-        //     "raw"=> $rawData = file_get_contents("php://input"),
-        //     "data"=>$data
-        // ];
-        // header('Content-Type: application/json; charset=utf-8');
-        // echo json_encode($response);
-        // exit;
+        $order_number = isset($data["order_number"]) ? $data["order_number"] : (isset($_GET["order_number"]) ? $_GET["order_number"] : false);
+        $isDebug = isset($data["debug"]) ? $data["debug"] : (isset($_GET["debug"]) ? $_GET["debug"] : false);
+
+        if($isDebug){
+            $keySDpresta = $this->get_api_key();
+            $isAuth = $this->check_auth($keyBearer, $keySDpresta);
+
+            $response = [
+                "method"=> $method,
+                "post"=>$_POST,
+                "raw"=> $rawData = file_get_contents("php://input"),
+                "data"=>$data,
+                "headers"=>$headers,
+                "mode"=>$mode,
+                "email"=>$email,
+                "order_number"=>$order_number,
+                "keyBearer"=>$keyBearer,
+                "keySDpresta"=>$keySDpresta,
+                "isAuth"=>$isAuth,
+            ];
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode($response);
+            exit;
+        }
+   
     
         if(!$keyBearer || !$mode) return $this->returnError();
     
@@ -410,9 +427,9 @@ class Prestashopasapchat extends Module
                         'col' => 3,
                         'type' => 'text',
                         'prefix' => '<i class="icon icon-gear"></i>',
-                        'desc' => $this->l('Podaj klucz SD wygenerowany w asapchat.io'),
+                        'desc' => $this->l('Podaj klucz Baer wygenerowany w asapchat.io'),
                         'name' => 'PRESTASHOPasapchat_API_SD',
-                        'label' => $this->l('Klucz SD'),
+                        'label' => $this->l('Klucz Baer asapchat'),
                     ),
                     // array(
                     //     'type' => 'password',

@@ -26,7 +26,9 @@
 <div class="panel">
 	<div class="row moduleconfig-header">
 		<div class="col-xs-12 text-center">
-			<img src="{$module_dir|escape:'html':'UTF-8'}views/img/logo.jpeg" />
+			{* <img src="{$module_dir|escape:'html':'UTF-8'}views/img/logo.jpeg" />
+			 *}
+			 <img width="100" src="https://asapchat.io/wp-content/uploads/2023/10/asapchat.io-cb.png" />
 		</div>
 		<div class="col-xs-12 text-center">
 			<h2>{l s='asapchat.io' mod='prestashopasapchat'}</h2>
