@@ -169,7 +169,7 @@ class Prestashopasapchat extends Module
 		$type_shop = $this->get_type_shop();
         
         $orders = [];
-        $customer_id_sql_first = Db::getInstance()->getRow('SELECT id_customer FROM '._DB_PREFIX_.'customer WHERE email = "'.pSQL($email).'"');
+        $customer_id_sql = Db::getInstance()->getRow('SELECT id_customer FROM '._DB_PREFIX_.'customer WHERE email = "'.pSQL($email).'"');
         $customer_id = $customer_id_sql_first['id_customer'];
         // $customer_id = Customer::customerExists($email, true);
         if ($customer_id) {
