@@ -197,6 +197,105 @@ class Prestashopasapchat extends Module
 		return $response;
 	}
 
+    public function getProducts($productKey){
+        $type_shop = $this->get_type_shop();
+        $productKey = pSQL($productKey); 
+        $id_lang = Context::getContext()->language->id; // Uzyskanie bieżącego języka
+
+        $sql = "
+            SELECT p.id_product, pl.name, pl.description, pl.description_short, pl.link_rewrite, IFNULL(SUM(od.product_quantity), 0) AS sale_count
+            FROM " . _DB_PREFIX_ . "product p
+            LEFT JOIN " . _DB_PREFIX_ . "product_lang pl ON p.id_product = pl.id_product AND pl.id_lang = $id_lang
+            LEFT JOIN " . _DB_PREFIX_ . "order_detail od ON p.id_product = od.product_id
+            WHERE (pl.name LIKE '%$productKey%'
+            OR pl.description LIKE '%$productKey%'
+            OR pl.description_short LIKE '%$productKey%'
+            OR pl.link_rewrite LIKE '%$productKey%')
+            AND p.active = 1
+            GROUP BY p.id_product
+            ORDER BY sale_count DESC
+            LIMIT 10";
+
+        $products = Db::getInstance()->executeS($sql);
+        if(!$products || !count($products)) return [
+            "message"=>"Error",
+            "data"=>"Empty",
+            "type"=> $type_shop 
+        ];
+
+        $products_list = [];
+        $shopurl = Configuration::get('PS_SHOP_DOMAIN');
+        $id_lang = (int) Configuration::get('PS_LANG_DEFAULT');
+        $https = Configuration::get('PS_SSL_ENABLED');
+        $shopurl = ($https ? 'https://' : 'http://').$shopurl;
+        $link = new Link();
+
+        foreach ($products as $product) {
+            $id_product = $product['id_product'];
+            $getProduct = new Product($id_product, false, $id_lang);
+            // $link = new Link();
+            // $url = $link->getProductLink($getProduct);
+            $url = $shopurl."/index.php?controller=product&id_product=".$id_product."&id_lang=".$id_lang;
+
+            $skuorean = $getProduct->reference;
+            $productTags = Tag::getProductTags($id_product);
+            $categories = Product::getProductCategoriesFull($id_product);
+            $categories = array_map(function($cat){
+                return $cat['name'];
+            }, $categories);
+            $attributes = $getProduct->getAttributesGroups($id_lang);
+            $attributes = array_map(function($attr){
+                return $attr['name'];
+            }, $attributes);
+
+            // $product_url = $link->getProductLink((int)$id_product);
+            // $image = Product::getCover((int)$id_product);
+            // $image = new Image($image['id_image']);
+            // $imagePath = _PS_BASE_URL_._THEME_PROD_DIR_.$image->getExistingImgPath().".jpg";
+            $imagePath = "";
+            
+            $products_list[] = [
+                "id"=>$product['id_product'],
+                "name"=>$product['name'],
+                "sku"=>$skuorean,
+                "price"=>$getProduct->price,
+                "image"=>$imagePath,
+                "link"=>$url,
+                "categories"=> $categories,
+                "tags"=> $productTags,
+                "attributes"=> $attributes,
+                "description"=>$product['description'],
+                "description_short"=>$product['description_short'],
+            ];
+
+        }
+
+        // $product = wc_get_product($productid);
+		// 	$products_list[] = [
+		// 		"name"=>$product->get_title(),
+		// 		"sku"=>$product->get_sku(),
+		// 		"price"=>$product->get_price(),
+		// 		"link"=>$product->get_permalink(),
+		// 		"image"=>$product->get_image(),
+		// 		"description"=>$product->get_description(),
+		// 		"short_description"=>$product->get_short_description(),
+		// 		"categories"=>$product->get_categories(),
+		// 		"tags"=>$product->get_tags(),
+		// 		"attributes"=>$product->get_attributes(),
+
+
+        var_dump($products_list);
+        exit;
+
+        
+        $response = [
+            "message"=>"Success",
+            "data"=> $products_list,
+            "type"=> $type_shop 
+        ];
+        return $response;
+    }
+
     public function get_type_shop(){
         return "prestashop";
     }
@@ -259,6 +358,7 @@ class Prestashopasapchat extends Module
         $data = (array) $this->retrieveJsonPostData();
         $mode = isset($data["mode"]) ? $data["mode"] : (isset($_GET["mode"]) ? $_GET["mode"] : false);
         $email = isset($data["email"]) ? $data["email"] : (isset($_GET["email"]) ? $_GET["email"] : false);
+        $productKey = isset($data["productKey"]) ? $data["productKey"] : (isset($_GET["productKey"]) ? $_GET["productKey"] : false);
 
         $order_number = isset($data["order_number"]) ? $data["order_number"] : (isset($_GET["order_number"]) ? $_GET["order_number"] : false);
         $isDebug = isset($data["debug"]) ? $data["debug"] : (isset($_GET["debug"]) ? $_GET["debug"] : false);
@@ -308,6 +408,10 @@ class Prestashopasapchat extends Module
     
             case 'getAllOrdersByEmail':
                 $response = $this->getAllOrdersByEmail($email);
+            break;
+
+            case 'getProducts':
+                $response = $this->getProducts($productKey);
             break;
             
             default:
