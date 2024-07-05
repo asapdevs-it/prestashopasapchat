@@ -176,6 +176,16 @@ class Prestashopasapchat extends Module
             $customer = new Customer($customer_id);
             $orders = Order::getCustomerOrders($customer_id);
         }
+        if(!$orders || !count($orders)){
+            $customers = Customer::getCustomersByEmail($email);
+            foreach ($customers as $customer) {
+                $customerId = $customer['id_customer'];
+                $ordersc = Order::getCustomerOrders($customerId);
+                if($orders && count($orders)) break;
+                array_push($orders, ...$ordersc);
+            }
+        }
+        
 
 		if(!$orders || !count($orders)) return [
 			"message"=>"Error",
