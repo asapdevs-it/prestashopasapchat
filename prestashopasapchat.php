@@ -156,6 +156,12 @@ class Prestashopasapchat extends Module
 		// $order = wc_get_order($order_number);
         $order = new Order($order_number);  
 		$type_shop = $this->get_type_shop();
+       
+        if(!$order || !isset($order->id) || !$order->id){
+            $order_id = Db::getInstance()->getValue('SELECT id_order FROM '._DB_PREFIX_.'orders WHERE reference = "'.pSQL($order_number).'"');
+            $order = new Order($order_id);
+        }
+
 
 		if(!$order) return [
 			"message"=>"Error",
@@ -294,8 +300,8 @@ class Prestashopasapchat extends Module
 		// 		"attributes"=>$product->get_attributes(),
 
 
-        var_dump($products_list);
-        exit;
+        // var_dump($products_list);
+        // exit;
 
         
         $response = [
@@ -601,6 +607,29 @@ class Prestashopasapchat extends Module
     {
         $this->context->controller->addJS($this->_path.'/views/js/front.js');
         $this->context->controller->addCSS($this->_path.'/views/css/front.css');
+        
+        $appendToFooter = '<script sticky="1"
+            position="right-bottom"
+            id="embedded-widget"
+            main_color="#242021"
+            name="Root7 asystent"
+            bot_name="Root7 asystent"
+            data_startmessagebeforeopen="Cześć ✋"
+            data_secondmessagebeforceopen="Jak mogę Ci pomóc?🤔"
+            src="https://asapchat.io/chat/embedded-widget.js"
+            shop_id="19" token="c3e1217d9a9b30852085fc6dca90339d"></script>
+            <style>
+            .cleanslate button:hover div {
+                color: white!important;
+            }
+            .cleanslate{
+                textarea, input{
+                    font-size: 16px!important;
+                }
+            }
+            </style>';
+            return $appendToFooter;
+        // $this->context->controller->addHTML($appendToFooter);
     }
 
     public function hookActionAttributePostProcess()
