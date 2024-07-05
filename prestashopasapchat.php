@@ -218,6 +218,8 @@ class Prestashopasapchat extends Module
         $productKey = pSQL($productKey); 
         $id_lang = Context::getContext()->language->id; // Uzyskanie bieżącego języka
 
+        $productKey = str_replace(" ", "%", $productKey);
+
         $sql = "
             SELECT p.id_product, pl.name, pl.description, pl.description_short, pl.link_rewrite, IFNULL(SUM(od.product_quantity), 0) AS sale_count
             FROM " . _DB_PREFIX_ . "product p
@@ -626,7 +628,11 @@ class Prestashopasapchat extends Module
                 textarea, input{
                     font-size: 16px!important;
                 }
+                [class*="Text__TextCustom"] a[target="_blank"]{
+                    color:white!important;
+                }
             }
+            
             </style>';
             return $appendToFooter;
         // $this->context->controller->addHTML($appendToFooter);
