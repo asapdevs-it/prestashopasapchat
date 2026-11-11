@@ -1,6 +1,6 @@
 # Wydawanie modułu: GitHub Releases
 
-Moduł nie jest w katalogu PrestaShop Addons. Nie potrzebujesz żadnego konta sprzedawcy ani opłat. Jedyne konto to Twoje konto GitHub z dostępem do repo `asapdevs-it/prestashopasapchat`.
+Moduł rozdajemy sami jako zip. Nie potrzebujesz żadnego konta sprzedawcy ani opłat. Jedyne konto to Twoje konto GitHub z dostępem do repo `asapdevs-it/prestashopasapchat`.
 
 ## Kto co robi
 
@@ -8,7 +8,7 @@ Moduł nie jest w katalogu PrestaShop Addons. Nie potrzebujesz żadnego konta sp
 |---|---|
 | Podbicie wersji, tag, sprawdzenie zipa | deweloper, który domyka wydanie |
 | Zgoda na wydanie (review PR z podbiciem wersji) | Kamil (`prz10`) |
-| Publikacja wydania w GitHub Releases | CI po wypchnięciu tagu. Gdy CI nie działa: deweloper ręcznie |
+| Publikacja wydania w GitHub Releases | CI po wypchnięciu tagu (workflow wydania dodaje zadanie 14). Gdy CI nie działa: deweloper ręcznie |
 | Ustawienie wersji w backendzie AsapChat | tylko Kamil |
 
 Uprawnienia: do tworzenia tagów i wydań potrzebujesz roli „Write” w repo. Nadaje ją Kamil.
@@ -37,7 +37,7 @@ git tag vX.Y.Z
 git push origin vX.Y.Z
 ```
 
-4. CI buduje `asapchat.zip` i tworzy wydanie `vX.Y.Z` w GitHub Releases z tym plikiem.
+4. CI buduje `asapchat.zip` i tworzy wydanie `vX.Y.Z` w GitHub Releases z tym plikiem. Ten workflow powstaje w zadaniu 14 (pierwsze wydanie). CI z zadania 01 buduje zip tylko jako artefakt PR.
 5. Uzupełnij notatkę wydania według szablonu z `docs/marketplace-listing.md`, punkt 3.
 6. Sprawdź zip:
    - pobierz go z wydania (nie z własnego dysku),
@@ -52,7 +52,7 @@ Zasady paczki: plik zawsze nazywa się `asapchat.zip`, bez numeru wersji w nazwi
 
 Sklepy dowiadują się o nowej wersji z backendu AsapChat. Backend ma trzy wartości, które ustawia Kamil. Ty mu je podajesz.
 
-Dodaj komentarz w issue „Wydanie X.Y.Z” i oznacz `prz10`. Wklej dokładnie to, z prawdziwymi wartościami:
+Dodaj komentarz w issue wydania i oznacz `prz10`. Dla wersji 1.0.0 issue wydania to zadanie 14. Dla każdej kolejnej wersji deweloper, który ją domyka, zakłada issue „Wydanie X.Y.Z”. Wklej dokładnie to, z prawdziwymi wartościami:
 
 ```
 Wydanie PrestaShop gotowe do ustawienia w backendzie:

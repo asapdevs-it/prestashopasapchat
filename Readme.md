@@ -5,7 +5,7 @@ Oficjalny, darmowy moduł PrestaShop. Łączy sklep z kontem AsapChat i dodaje n
 - Nazwa techniczna modułu: `asapchat` (folder `asapchat/`, plik główny `asapchat.php`).
 - Wspierane wersje PrestaShop: 1.7.8, 8.x, 9.x.
 - Wydawca: AsapCommerce.
-- Pobieranie: plik `asapchat.zip` z [GitHub Releases](https://github.com/asapdevs-it/prestashopasapchat/releases). Ten sam link jest w panelu AsapChat (Sklep, potem Wtyczka).
+- Pobieranie: plik `asapchat.zip` z [GitHub Releases](https://github.com/asapdevs-it/prestashopasapchat/releases). Pierwsze wydanie pojawi się po zadaniu 14, do tego czasu lista wydań jest pusta. Ten sam link będzie w panelu AsapChat (edycja sklepu, link „Wtyczka”).
 
 ## Co robi moduł w wersji 1
 
@@ -30,24 +30,24 @@ Oficjalny, darmowy moduł PrestaShop. Łączy sklep z kontem AsapChat i dodaje n
 
 ## Dystrybucja
 
-Moduł nie jest w katalogu PrestaShop Addons. Każda wersja to wydanie w GitHub Releases z plikiem `asapchat.zip`. Moduł porównuje własną wersję z numerem najnowszej wersji z AsapChat i pokazuje pasek, gdy jest nowsza. Jak wydać wersję: `docs/accounts.md`.
+Moduł rozdajemy sami, poza katalogiem modułów PrestaShop. Każda wersja to wydanie w GitHub Releases z plikiem `asapchat.zip`. Moduł porównuje własną wersję z numerem najnowszej wersji z AsapChat i pokazuje pasek, gdy jest nowsza. Jak wydać wersję: `docs/accounts.md`.
 
 ## Gałęzie
 
-- `main`: bieżąca praca.
-- `legacy`: archiwum. Nie kopiuj z niej kodu.
+- `main`: bieżąca praca. Do zamknięcia zadania 01 w katalogu głównym leżą jeszcze pliki starego prototypu. Zadanie 01 je usuwa (lista w zadaniu).
+- `legacy`: archiwum starego prototypu. Nie kopiuj z niej kodu.
+- `master`: niezwiązana pozostałość po innym module. Nie używaj jej.
 
 ## Zacznij tutaj (kolejność czytania)
 
-1. `ONBOARDING-DEV.md`: jak pracujemy, jak brać zadania.
+1. `ONBOARDING-DEV.md`: jak pracujemy, jak brać zadania, środowisko lokalne.
 2. `docs/CONNECT-API.md`: kontrakt z backendem AsapChat. Punkt 7 mówi, jak z nim pracować.
-3. `.ai/specs/2026-11-11-connector-v1.md`: pełna specyfikacja modułu i lista issues.
+3. `.ai/specs/2026-11-11-connector-v1.md`: pełna specyfikacja modułu i lista zadań.
 4. `docs/mockups/configure.html`: jak ma wyglądać ekran konfiguracji (otwórz w przeglądarce).
-5. `AGENTS.md`: zasady kodu dla Ciebie i dla agenta AI.
-6. `docs/accounts.md`: jak wydać nową wersję i komu przekazać numer wersji.
-7. `docs/marketplace-listing.md`: teksty na stronę pobierania i szablon notatki wydania.
-8. Issues w GitHub: zadania w kolejności numerów.
+5. `docs/marketplace-listing.md` i `docs/accounts.md`: teksty strony pobierania, jak wydać wersję.
+6. `AGENTS.md`, `SDLC.md`, `CODE_REVIEW.md`: zasady kodu i pracy.
+7. Issues w GitHub: zadania w kolejności prefiksu `01` do `14` w tytule, nie numeru GitHub.
 
 ## Kolejność pracy
 
-Issues robisz w kolejności z punktu 19 specyfikacji: szkielet, ekran, połączenie, config, skrypty na stronie sklepu, sekcje ustawień, pasek aktualizacji, multistore, tłumaczenia, wydanie.
+Zadania robisz w kolejności prefiksu w tytule (`01` do `14`), tej samej co w punkcie 19 specyfikacji. Numer GitHub (`#N`) nie wyznacza kolejności. Kolejno: szkielet, ekran, połączenie, config, skrypty na stronie sklepu, sekcje ustawień, pasek aktualizacji, multistore, tłumaczenia, wydanie.

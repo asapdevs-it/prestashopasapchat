@@ -4,10 +4,10 @@ Proces pracy: `SDLC.md`. Specyfikacja: `.ai/specs/2026-11-11-connector-v1.md`. K
 
 ## Stack
 
-- PHP 7.2 do 8.4 (kod musi działać na PHP z PrestaShop 1.7.8, czyli bez składni PHP 8).
+- PHP 7.2 do 8.4 (kod musi działać na PHP z PrestaShop 1.7.8, czyli bez składni PHP 8). CI: składnia na 7.2 i 8.4, testy jednostkowe na 7.4, 8.1 i 8.3.
 - PrestaShop 1.7.8, 8.x, 9.x. Jeden kod dla wszystkich.
-- Smarty (szablony `.tpl`), bez Composera w paczce, bez JS frameworków.
-- Dystrybucja: zip w GitHub Releases. Moduł nie jest w katalogu PrestaShop Addons.
+- Smarty (szablony `.tpl`), bez JS frameworków. Composer tylko do narzędzi deweloperskich (`require-dev`): `vendor/` nie trafia do zipa.
+- Dystrybucja: zip w GitHub Releases, poza katalogiem modułów PrestaShop.
 
 ## Układ katalogów (do utworzenia)
 
@@ -15,10 +15,11 @@ Proces pracy: `SDLC.md`. Specyfikacja: `.ai/specs/2026-11-11-connector-v1.md`. K
 asapchat/
   asapchat.php                      klasa modułu: install, uninstall, hooki, getContent
   config.xml                        generowany przez PrestaShop
-  logo.png                          57x57
+  logo.png                          57x57, zrobione z logo SVG w zadaniu 01
   index.php                         w KAŻDYM katalogu
   .htaccess                         blokada bezpośredniego uruchamiania PHP
   classes/AsapchatClient.php        wywołania API (token, config, settings, disconnect)
+  classes/                          logika bez zależności od PrestaShop (patrz Testy)
   controllers/admin/AdminAsapchatConnectController.php   powrót z panelu
   views/templates/admin/configure.tpl
   views/templates/hook/scripts.tpl
@@ -29,12 +30,16 @@ asapchat/
   upgrade/                          upgrade-X.Y.Z.php dla wersji, które zmieniają klucze lub hooki
 ```
 
-Kod modułu leży w podkatalogu `asapchat/` repozytorium. Dokumenty projektu (`docs/`, `.ai/`) zostają w katalogu głównym i nie trafiają do zipa.
+Kod modułu leży w podkatalogu `asapchat/` repozytorium. Dokumenty projektu (`docs/`, `.ai/`), `composer.json`, konfiguracja narzędzi i `tests/` zostają w katalogu głównym i nie trafiają do zipa.
+
+Plik `asapchat/views/img/asapchat-logo-white.svg` jest już w repo. Font: pliki woff2 z pakietu `@fontsource/open-sans` (licencja OFL), grubości 400, 600, 700 i 800, zestawy `latin` i `latin-ext`. Kopiujesz je do `asapchat/views/fonts/` razem z plikiem licencji.
+
+Stare pliki prototypu w katalogu głównym (`prestashopasapchat.php`, `config.xml`, `config_pl.xml`, `controllers/`, `sql/`, `translations/`, `upgrade/`, `views/`, `index.php`) usuwa zadanie 01. Zostają na gałęzi `legacy`.
 
 ## Zasady kodu
 
-1. Każdy plik PHP zaczyna się od nagłówka licencji AFL 3.0 i `if (!defined('_PS_VERSION_')) { exit; }`.
-2. `index.php` w każdym katalogu modułu (poza `vendor/`).
+1. Każdy plik PHP zaczyna się od nagłówka licencji AFL 3.0 i `if (!defined('_PS_VERSION_')) { exit; }`. Tekst nagłówka: standardowy nagłówek modułu z dokumentacji PrestaShop (devdocs, „Good practices for developing modules”), z właścicielem praw AsapCommerce. `prestashop/php-dev-tools` ma komendę, która go dokleja (`vendor/bin/header-stamp`).
+2. `index.php` w każdym katalogu modułu: standardowy plik PrestaShop, który odsyła nagłówki bez cache i przekierowuje na `../`. W katalogu głównym modułu `.htaccess` z regułą odmowy dla bezpośrednich wywołań plików `.php`, `.tpl` i `.md` (wzór: `.htaccess` z modułów dostarczanych z PrestaShop).
 3. Klucze konfiguracji z prefiksem `ASAPCHAT_`. Pełna lista i znaczenie: punkt 4 specyfikacji. Nie dodawaj klucza, którego tam nie ma.
 4. Ekran ustawień to własny szablon Smarty w stylu AsapChat (bez `HelperForm`), renderowany w `getContent()`. Każdy zapis sprawdza `Tools::isSubmit` i token BO.
 5. Hooki: `displayHeader` dla skryptu wyszukiwarki, `displayBeforeBodyClosingTag` dla czatu, `displayFooter` jako zapas, gdy motyw nie woła poprzedniego, `displayBackOfficeHeader` dla CSS ekranu i odświeżania config. Flaga w pamięci pilnuje, żeby skrypt nie wyszedł dwa razy.
@@ -43,12 +48,12 @@ Kod modułu leży w podkatalogu `asapchat/` repozytorium. Dokumenty projektu (`d
 8. Multistore: używaj `Configuration::get($key, null, $idShopGroup, $idShop)` i zapisuj w kontekście bieżącego sklepu. Każdy sklep ma własne połączenie.
 9. SQL: w v1 moduł nie ma własnych tabel. Jeśli zapytanie jest konieczne: `pSQL()`, `(int)`, `bqSQL()`.
 10. HTTP tylko w back office, nigdy w żądaniu klienta sklepu. Timeout 5 s. Moduł nie ma crona.
-11. Porównania sekretów przez `hash_equals`.
+11. Porównania sekretów przez `hash_equals`. Token `ack_...` zapisujesz jawnie w `Configuration` (tylko po stronie serwera, nigdy w odpowiedzi). Szyfrowania w v1 nie ma.
 12. Zero notice i warningów przy `_PS_MODE_DEV_ = true`.
 13. Teksty domyślne po angielsku w kodzie (`$this->l('...')`), polski w `translations/pl.php`.
 14. Bez override'ów klas, bez zmian tabel rdzenia, bez `var_dump`, `die`, `error_reporting`, zakomentowanego kodu.
-15. CSS ekranu: każda klasa z prefiksem `asapchat-`, każda reguła zaczyna się od `.asapchat-app`. Font Open Sans z paczki modułu, bez zewnętrznych adresów. Tokeny wyglądu: punkt 5.1 specyfikacji.
-16. Adres AsapChat tylko ze stałej `ASAPCHAT_BASE`. Nigdy pole w ustawieniach.
+15. CSS ekranu: każda klasa z prefiksem `asapchat-`, każda reguła zaczyna się od `.asapchat-app`. Nazwy `mk-ps-*` z mockupu są tylko w mockupie. Font Open Sans z paczki modułu, bez zewnętrznych adresów. Tokeny wyglądu: punkt 5.1 specyfikacji.
+16. Adres AsapChat tylko ze stałej `ASAPCHAT_BASE`. Nigdy pole w ustawieniach. Adres skryptu (`src`) wstawiasz tylko, gdy zaczyna się od `https://asapchat.io/`, bez wyjątków.
 17. Wersja modułu jest w jednym miejscu: `$this->version` w konstruktorze. Z nią porównujesz `plugin.latest_version`.
 
 ## Walidacja (uruchom przed każdym PR)
@@ -57,9 +62,33 @@ Kod modułu leży w podkatalogu `asapchat/` repozytorium. Dokumenty projektu (`d
 find asapchat -name '*.php' -print0 | xargs -0 -n1 php -l
 vendor/bin/php-cs-fixer fix --dry-run --diff
 vendor/bin/phpstan analyse asapchat
+vendor/bin/phpunit
 ```
 
-Ręcznie przed wydaniem: wgraj zip na https://validator.prestashop.com i popraw błędy. To dobra praktyka, nie warunek zewnętrzny.
+Narzędzia przychodzą z `composer install` (zadanie 01 dodaje `composer.json`):
+
+- `prestashop/php-dev-tools`: z niego bierzesz konfigurację `php-cs-fixer` (`.php-cs-fixer.dist.php` oparty o `PrestaShop\CodingStandards\CsFixer\Config`).
+- `phpstan/phpstan`, poziom 5, plik `phpstan.neon`. Klasy PrestaShop phpstan bierze z kodu PrestaShop wskazanego zmienną `_PS_ROOT_DIR_`: lokalnie katalog sklepu z Dockera, w CI pobrany kod PrestaShop.
+- `phpunit/phpunit`, plik `phpunit.xml.dist`, testy w `tests/`.
+
+Przed zadaniem 01 dwie środkowe komendy i testy nie mają na czym działać. To zadanie 01 je uruchamia.
+
+## Testy
+
+Testy jednostkowe (`tests/`, `vendor/bin/phpunit`) obejmują klasy bez zależności od PrestaShop. Dlatego logikę trzymaj w małych klasach w `asapchat/classes/`, a klasa modułu i kontroler tylko je wołają:
+
+- klient API za małym interfejsem transportu HTTP (w testach podstawiasz stałe odpowiedzi z kontraktu, punkt 4 i 7a),
+- `state` i PKCE (losowanie, ważność 2 godziny, porównanie),
+- zapis i odczyt config z magazynu za interfejsem (w testach tablica),
+- porównanie wersji dla paska aktualizacji,
+- budowa znacznika skryptu (atrybuty, `allow_add-to-cart`, reguła `src`),
+- wykluczenia i walidacja pól formularza.
+
+Testy nie uruchamiają PrestaShop. To, czego nie da się sprawdzić bez sklepu (hooki, ekran, instalacja), sprawdza QA ręcznie według macierzy ze specyfikacji.
+
+CI (zadanie 01): `php -l` na PHP 7.2 i 8.4, `php-cs-fixer` i `phpstan` na 8.1, `phpunit` na 7.4, 8.1 i 8.3, budowa `asapchat.zip`. Workflow wydania (tag tworzy wydanie z zipem) dodaje zadanie 14.
+
+Opcjonalnie przed wydaniem: wgraj zip na https://validator.prestashop.com. Wymaga konta PrestaShop, którego ten projekt nie zakłada, więc to nie jest warunek.
 
 ## Czego agent nie robi nigdy
 
@@ -68,6 +97,7 @@ Ręcznie przed wydaniem: wgraj zip na https://validator.prestashop.com i popraw 
 - Nie dodaje synchronizacji zamówień ani produktów. Nie tworzy klucza Webservice za sprzedawcę.
 - Nie pobiera i nie instaluje aktualizacji modułu. Pokazuje tylko pasek z linkiem do zipa.
 - Nie zmienia `docs/CONNECT-API.md`. Potrzebna zmiana kontraktu: issue z etykietą `needs-backend` i oznaczeniem `prz10`.
+- Nie merguje inaczej niż przez squash i nie wpisuje w PR polskich słów zamykających: tylko `Closes #N`.
 - Nie wpisuje `shop_id`, tokenu ani domeny na sztywno. Wszystko pochodzi z `GET /api/plugin/v1/config`.
 - Nie prosi o hasło AsapChat i go nie zapisuje.
 - Nie loguje tokenu `ack_...` ani kodu jednorazowego.
