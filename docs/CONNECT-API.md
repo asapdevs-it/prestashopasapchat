@@ -148,8 +148,8 @@ Wygląd widgetu, wspólny z panelem AsapChat. Wysyłasz tylko zmienione pola, od
 
 | Pole | Reguła |
 |---|---|
-| `bot_name` | tekst, do 40 znaków |
-| `main_color` | `#rrggbb` |
+| `bot_name` | tekst, 1 do 40 znaków (pusty = `422`) |
+| `main_color` | `#rrggbb`, wymagany gdy wysyłasz to pole |
 | `position` | `right-bottom` albo `left-bottom` |
 | `greeting_1`, `greeting_2` | tekst do 120 znaków, pusty = bez dymka powitania |
 
