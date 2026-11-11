@@ -3,7 +3,7 @@
 Wspólny kontrakt wszystkich wtyczek AsapChat (WordPress, PrestaShop, Shopify, Shoper, GTM). Ten plik jest kopią: zmiany zgłaszaj przez issue z etykietą `needs-backend`, nie edytuj go w repo wtyczki.
 
 Adres bazowy: `https://panel.asapchat.io`. We wtyczce trzymaj go w jednej stałej, którą da się nadpisać
-(np. `define('ASAPCHAT_BASE', ...)` w `wp-config.php`), bo testujesz też na innym adresie.
+(np. `define('ASAPCHAT_BASE', ...)` w `wp-config.php`), żeby testy automatyczne mogły wskazać atrapę serwera. Osobnego środowiska testowego nie ma: pracujesz na produkcji z własnym kontem (punkt 7).
 
 ## 1. Co robi wtyczka
 
@@ -31,13 +31,15 @@ wtyczka                              panel.asapchat.io                     użyt
 
 | Parametr | Wartość |
 |---|---|
-| `platform` | `wordpress`, `prestashop`, `shopify`, `shoper`, `gtm` |
+| `platform` | `wordpress`, `prestashop`, `shopify`, `shoper`, `magento`, `gtm`. Inna wartość = ekran błędu (422). WooCommerce to `wordpress`. |
 | `site_url` | adres sklepu, np. `https://sklep.pl` (tylko `http`/`https`) |
 | `return_url` | adres w panelu sklepu, na który wracamy. Musi być `https` (wyjątek: `http://localhost` i `http://127.0.0.1`), na tym samym hoście i porcie co `site_url` (`www.` pomijamy), bez `user:pass@`, bez `#fragmentu`, bez spacji i backslasha. Domeny z polskimi znakami podaj jako punycode (`xn--...`). Może mieć własne parametry (`?action=...`). |
 | `state` | losowe 32 znaki z `[A-Za-z0-9._~-]` (min. 16). Zapisz po stronie sklepu z czasem życia 2 godziny. |
 | `code_challenge` | `base64url(sha256(code_verifier))` bez `=`, dokładnie 43 znaki |
 
-`code_verifier`: losowe 43 do 128 znaków, zapisane obok `state`. Nigdy nie trafia do adresu.
+`code_verifier`: losowe 43 do 128 znaków z `[A-Za-z0-9._~-]`, zapisane obok `state`. Nigdy nie trafia do adresu.
+
+Limit: 30 wejść na `/connect` na minutę z jednego IP.
 
 ```php
 $verifier  = rtrim(strtr(base64_encode(random_bytes(48)), '+/', '-_'), '=');
@@ -68,22 +70,28 @@ curl -X POST https://panel.asapchat.io/api/plugin/v1/token \
   -d '{"code":"<code>","code_verifier":"<verifier>"}'
 ```
 
+To wywołanie idzie bez `Authorization` i bez `X-Site-Url` (tokenu jeszcze nie ma).
+
 `200`: `{"token":"ack_...","shop":{"id":17,"name":"Kwiatowy"},"config":{...}}`. `config` ma ten sam kształt co `GET /config`.
 
 `400 {"error":"invalid_grant"}`: kod zły, użyty drugi raz, starszy niż 120 sekund albo zły `code_verifier`. Kod przepada po pierwszej próbie. Limit: 10 prób na minutę z jednego IP.
 
-Token `ack_...` (52 znaki) to sekret. Zapisz go w ustawieniach sklepu po stronie serwera. Nie pokazuj w HTML, nie loguj, nie wstawiaj do JS. Ponowne połączenie tej samej strony unieważnia poprzedni token.
+Token to `ack_` i 48 znaków `[A-Za-z0-9]` (razem 52). To sekret. Zapisz go w ustawieniach sklepu po stronie serwera. Nie pokazuj w HTML, nie loguj, nie wstawiaj do JS.
+
+Ponowne połączenie tego samego sklepu AsapChat z tego samego hosta unieważnia poprzedni token. Dwa różne sklepy AsapChat na jednym hoście (np. multistore w podkatalogach) mają osobne, niezależne tokeny.
 
 ## 3. Połączenie kluczem instalacyjnym (zapas)
 
-Użytkownik generuje klucz w panelu: Sklep → Wtyczka → „Klucz instalacyjny”, i wkleja go w polu wtyczki. Klucz to od razu token `ack_...`.
+Użytkownik generuje klucz w panelu: edycja sklepu → link „Wtyczka” → „Klucz instalacyjny” (adres tej strony to `links.plugin` z `config`), i wkleja go w polu wtyczki. Przy generowaniu wybiera platformę, od niej zależy sekcja `plugin` w `config`. Klucz to od razu token `ack_...`.
 Wtyczka woła `GET /config` z nagłówkiem `X-Site-Url`. Pierwsze wywołanie wiąże klucz z tym hostem. Na innym hoście klucz zwraca `409`.
 Klucz trzeba użyć w ciągu 24 godzin od wygenerowania, potem wygasa (`401`).
 Klucz to jedyna droga, gdy przycisk nie może zadziałać: sklep po `http`, panel administracyjny na innej domenie niż sklep (multistore, aplikacje hostowane). `X-Site-Url` może być po `http`, liczy się sam host.
 
 ## 4. API z tokenem
 
-Każde wywołanie: `Authorization: Bearer ack_...`, `Accept: application/json`, `X-Site-Url: https://sklep.pl` (obowiązkowy, brak = `400`). Limit: 60 na minutę z jednego adresu IP.
+Każde wywołanie: `Authorization: Bearer ack_...`, `Accept: application/json`, `X-Site-Url: https://sklep.pl` (obowiązkowy, brak = `400`). Dane w `PATCH` wysyłasz jako JSON (`Content-Type: application/json`). Limit: 60 na minutę z jednego adresu IP.
+
+Serwer najpierw sprawdza token, potem `X-Site-Url`: bez ważnego tokenu zawsze wraca `401`, więc `400` zobaczysz tylko z ważnym tokenem.
 
 Token należy do sklepu, nie do osoby: działa dalej, gdy osoba, która łączyła, straci dostęp do sklepu. Odwołuje go właściciel w panelu (Sklep → Wtyczka) albo „Rozłącz” we wtyczce.
 
@@ -111,26 +119,27 @@ Token należy do sklepu, nie do osoby: działa dalej, gdy osoba, która łączy�
 
 Zasady dla wtyczki:
 
-- **Skrypty.** `src` zawsze zaczyna się od `https://asapchat.io/`. Inny adres: nie wstawiaj skryptu. Wstaw `<script src="{chat.src}" ...>` i dopisz KAŻDĄ parę z `chat.attributes` jako atrybut, bez listy dozwolonych nazw. Wartość `true` = atrybut bez wartości (np. `defer`). To samo dla `search`, gdy `search.enabled`. Nazwy atrybutów mogą się zmieniać, nie wpisuj ich na sztywno.
+- **Skrypty.** `src` zawsze zaczyna się od `https://asapchat.io/` (dziś `https://asapchat.io/chat/embedded-widget.js` i `https://asapchat.io/search/asap-search-widget.iife.js`). Inny adres: nie wstawiaj skryptu. Ta reguła nie ma wyjątków, także dla nadpisanego adresu bazowego. Wstaw `<script src="{chat.src}" ...>` i dopisz KAŻDĄ parę z `chat.attributes` jako atrybut, bez listy dozwolonych nazw. Wartość `true` = atrybut bez wartości (np. `defer`). To samo dla `search`, gdy `search.enabled`. Nazwy atrybutów mogą się zmieniać, nie wpisuj ich na sztywno.
 - **Cache.** Trzymaj całą odpowiedź lokalnie i odświeżaj co `refresh_after` sekund oraz przy wejściu na stronę ustawień wtyczki. Strona sklepu nigdy nie czeka na AsapChat: skrypty wstawiasz z zapisanej kopii.
 - **Wyszukiwarka wyłączona** (`search.enabled=false`): sklep nie ma jeszcze zaimportowanych produktów. Pokaż przełącznik jako nieaktywny z linkiem `sources.connect_url`.
-- **`shop.plan`**: `free` albo `pro`. Pokaż nazwę planu, a gdy `ai_conversations_limit` jest liczbą, także „N rozmów AI miesięcznie”.
-- **`sources.systems`**: lista nazw podłączonych systemów (np. `woo`, `presta`, `baselinker`), tylko do wyświetlenia jako tekst. Może być pusta.
+- **`shop.plan`**: `free` albo `pro`. Pokaż nazwę planu, a gdy `ai_conversations_limit` jest liczbą (przy każdym planie), także „N rozmów AI miesięcznie”. `null` = sama nazwa planu.
+- **`v`**: wersja kształtu odpowiedzi. Inna niż `1`: nie nadpisuj zapisanej kopii i pokaż prośbę o aktualizację wtyczki.
+- **`sources.systems`**: lista nazw podłączonych systemów (np. `woo`, `presta`, `baselinker`). Pole informacyjne: możesz je pominąć w UI. Może być puste.
 - **`sources`**: sekcja „Źródło zamówień i produktów”. `orders_connected` / `products_connected` jako dwa statusy, przycisk „Podłącz w AsapChat” prowadzi na `connect_url` (WooCommerce łączy się tam jednym kliknięciem, pozostałe platformy przez klucze API). Pod spodem krótka instrukcja, gdzie w tej platformie wygenerować klucze (tekst w specu repo).
 - **Po 401 i po „Rozłącz”** ustawienia lokalne wtyczki (przełączniki, wykluczenia, opóźnienie) zostają. Kasujesz tylko token i zapisany `config`.
 - **`status.search_seen_at`**: jak niżej, dla wyszukiwarki („Wyszukiwarka działa” / „Jeszcze niewidziana na stronie”).
-- **`status.widget_seen_at`**: `null` = czat nie był jeszcze widziany na stronie („Otwórz sklep w nowej karcie, żeby sprawdzić”), data = „Czat działa”.
-- **`plugin.latest_version`**: gdy nie jest `null` i jest wyższa niż wersja wtyczki (`version_compare`), pokaż pasek „Dostępna wersja X” z `download_url` i `changelog_url`. `null` = katalog platformy aktualizuje wtyczkę sam, nic nie pokazuj.
+- **`status.widget_seen_at`**: `null` = czat nie był jeszcze widziany na stronie („Otwórz sklep w nowej karcie, żeby sprawdzić”), data = „Czat działa”. Daty przychodzą w ISO 8601 ze strefą, np. `2026-11-11T10:42:00+01:00`. Wyświetlaj w strefie i formacie sklepu.
+- **`plugin.latest_version`**: gdy nie jest `null` i jest wyższa niż wersja wtyczki (`version_compare`), pokaż pasek „Dostępna wersja X” z `download_url` i `changelog_url`. `null` = katalog platformy aktualizuje wtyczkę sam, nic nie pokazuj. Dla `wordpress` zawsze przychodzi `null` (aktualizacje robi WordPress.org), więc wtyczka WordPress nie buduje tego paska.
 
 Kody błędów (dla wszystkich wywołań z tokenem):
 
 | Kod | Znaczenie | Co robi wtyczka |
 |---|---|---|
-| `400` | brak nagłówka `X-Site-Url` | błąd w kodzie wtyczki, popraw |
-| `401` | token nieznany, odwołany w panelu albo klucz instalacyjny nieużyty przez 24 h | kasuje token i cache, przestaje wstawiać skrypty, pokazuje „Połącz ponownie” |
-| `409` | token związany z inną domeną | jak wyżej, z komunikatem o innej domenie |
-| `410` | sklep usunięty w AsapChat | jak przy 401 |
-| `422` | złe dane w `PATCH /settings` | pokazuje błędy pól z `errors` |
+| `400` | brak nagłówka `X-Site-Url`, treść `{"error":"site_url_required"}` | błąd w kodzie wtyczki, popraw |
+| `401` | token nieznany, odwołany w panelu albo klucz instalacyjny nieużyty przez 24 h, treść `{"error":"unauthorized"}` | kasuje token i cache, przestaje wstawiać skrypty, pokazuje „Połącz ponownie” |
+| `409` | token związany z inną domeną, treść `{"error":"host_mismatch"}` | jak wyżej, z komunikatem o innej domenie |
+| `410` | sklep usunięty w AsapChat, treść `{"error":"shop_deleted"}` | jak przy 401 |
+| `422` | złe dane w `PATCH /settings` | pokazuje przy polu pierwszy komunikat z `errors[pole]` (przykład niżej) |
 | `429`, `5xx`, brak sieci | chwilowy problem | NIC nie kasuje, działa dalej na zapisanej kopii, próbuje przy następnym odświeżeniu |
 
 ### PATCH /api/plugin/v1/settings
@@ -143,6 +152,14 @@ Wygląd widgetu, wspólny z panelem AsapChat. Wysyłasz tylko zmienione pola, od
 | `main_color` | `#rrggbb` |
 | `position` | `right-bottom` albo `left-bottom` |
 | `greeting_1`, `greeting_2` | tekst do 120 znaków, pusty = bez dymka powitania |
+
+Metoda to wyłącznie `PATCH` (`PUT` i `POST` dają `405`). `main_color` wraca małymi literami.
+
+Błąd walidacji (`422`): klucze `errors` to nazwy pól, wartość to lista komunikatów po polsku. Komunikaty są ogólne, więc przy polu pokaż własny tekst wtyczki (np. „Podaj kolor w formacie #rrggbb”), a `errors` użyj do wskazania pola.
+
+```json
+{"message": "format atrybutu jest nieprawidłowy.", "errors": {"main_color": ["format atrybutu jest nieprawidłowy."]}}
+```
 
 ### DELETE /api/plugin/v1/connection
 
@@ -185,6 +202,8 @@ Do pracy nad wtyczką nie potrzebujesz kodu backendu.
 
 1. Załóż własne darmowe konto na `https://panel.asapchat.io/onboarding/1` (plan Free wystarcza). To Twój sklep testowy.
 2. Lokalny sklep stawiaj na `http://localhost:PORT` albo `http://127.0.0.1:PORT`. Tylko te dwa adresy przechodzą bez `https`. Domeny typu `sklep.test` wymagają `https` (np. mkcert albo tunel).
+   Na `localhost` przetestujesz połączenie, czat, wygląd, rozłączenie i błędy. Nie przetestujesz wyszukiwarki ani statusów źródeł: AsapChat pobiera produkty i zamówienia z API sklepu, a do `localhost` nie sięgnie. Do tych przypadków wystaw sklep pod publicznym adresem `https` (tunel) i podłącz źródło w panelu (`sources.connect_url`), a w testach automatycznych użyj przykładu z punktu 7a. Wyszukiwarka jest dostępna także w planie Free.
+   Plan Free to jeden sklep na konto. Do testu dwóch sklepów (multistore) i do ponownego testu ścieżki „nowe konto” załóż kolejne konto na inny adres e-mail.
 3. Po połączeniu host Twojej strony jest automatycznie dopuszczony do widgetu, czat ładuje się też na `localhost`.
 4. Klucz instalacyjny i podgląd połączeń: panel, Sklep → Wtyczka. Tam też odwołasz połączenie, żeby sprawdzić obsługę `401`.
 5. Przypadki do przeklikania przed każdym PR: połączenie przyciskiem, „Anuluj”, powrót ze złym `state`, klucz instalacyjny, odwołanie w panelu (401), brak sieci (skrypty dalej się wstawiają), rozłączenie, odinstalowanie.
@@ -192,6 +211,20 @@ Do pracy nad wtyczką nie potrzebujesz kodu backendu.
 7. Potrzebujesz zmiany w kontrakcie (nowe pole, nowa platforma): issue w repo wtyczki z etykietą `needs-backend`. Nie obchodź braków po swojej stronie.
 
 API działa na produkcji (`https://panel.asapchat.io`), możesz łączyć się z nim od razu z własnego sklepu testowego. W testach automatycznych używaj przykładowej odpowiedzi z punktu 4 jako stałej odpowiedzi klienta HTTP.
+
+### 7a. Przykład `search` i `status` po podłączeniu produktów
+
+Do testów automatycznych (na `localhost` tego stanu nie uzyskasz):
+
+```json
+"search": {
+  "enabled": true,
+  "src": "https://asapchat.io/search/asap-search-widget.iife.js",
+  "attributes": {"defer": true, "allow_add-to-cart": "true", "selectors": "input[type=search]", "shop_id": "17", "token": "...", "shop_engine": "Woocommerce"}
+},
+"sources": {"orders_connected": true, "products_connected": true, "systems": ["woo"], "connect_url": "https://panel.asapchat.io/admin/shops/17/connect"},
+"status": {"widget_seen_at": "2026-11-11T10:42:00+01:00", "search_seen_at": null}
+```
 
 ## 8. Czego wtyczce nie wolno
 
