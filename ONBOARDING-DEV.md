@@ -12,9 +12,9 @@ Repozytoria (organizacja `asapdevs-it`), w kolejności prac:
 |---|---|---|
 | 1 | `woocommerce-asapchat` | katalog WordPress.org (slug `asapchat`) |
 | 2 | `prestashopasapchat` | zip do pobrania (GitHub Releases, link w panelu AsapChat), bez Addons |
-| 3 | `asapchat-shopify` | Shopify App Store, aplikacja darmowa |
-| 4 | `asapchat-gtm-template` | galeria szablonów Google Tag Manager |
-| 5 | `asapchat-shoper` | Shoper App Store, aplikacja darmowa |
+| 3 | `asapchat-gtm-template` | galeria szablonów Google Tag Manager |
+| 4 | `asapchat-shoper` | Shoper App Store, aplikacja darmowa |
+| później | `asapchat-shopify` | odłożone, nie zaczynamy |
 | później | `asapchat-magento` | odłożone, nie zaczynamy |
 
 Backend (`asapchat`) prowadzi Kamil. Kontrakt jest gotowy i opisany w `docs/CONNECT-API.md`. Nie masz dostępu do repo backendu i go nie potrzebujesz: punkt 7 kontraktu mówi, jak testować.
