@@ -1,6 +1,6 @@
 # Teksty: strona pobierania i notatka wydania
 
-Moduł nie jest w katalogu PrestaShop Addons. Sprzedawca pobiera plik `asapchat.zip` z GitHub Releases. Link do pliku jest w panelu AsapChat (Sklep, potem Wtyczka).
+Moduł rozdajemy sami. Sprzedawca pobiera plik `asapchat.zip` z GitHub Releases. Link do pliku jest w panelu AsapChat (edycja sklepu, link „Wtyczka”).
 
 Ten plik zawiera gotowe teksty. Nazwa pliku została ze względu na inne repozytoria wtyczek, które mają dokument o tej samej nazwie.
 
@@ -79,7 +79,7 @@ Połączenie i ustawienia zostają. Nie odinstalowuj starej wersji przed wgranie
 | Nie widzę czatu na stronie | Sprawdź przełącznik „Czat” i sekcję „Gdzie pokazywać”. Wyczyść cache w Zaawansowane, potem Wydajność. |
 | Czat pojawia się z opóźnieniem | Sprawdź pole „Opóźnienie pojawienia się czatu”. |
 | Przełącznik wyszukiwarki jest nieaktywny | AsapChat nie ma jeszcze Twoich produktów. Podłącz klucz Webservice. |
-| Przycisk „Połącz” nie działa albo go nie ma | Użyj klucza instalacyjnego z panelu AsapChat (Sklep, potem Wtyczka). |
+| Przycisk „Połącz” nie działa albo go nie ma | Użyj klucza instalacyjnego z panelu AsapChat (edycja sklepu, link „Wtyczka”). |
 | Ekran pokazuje „Połącz sklep ponownie” | Połączenie zostało odwołane w panelu AsapChat. Kliknij „Połącz ponownie”. Ustawienia modułu zostały. |
 | Mam kilka sklepów (multistore) | Wybierz sklep z listy u góry panelu i połącz każdy osobno. |
 

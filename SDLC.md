@@ -92,6 +92,7 @@ The one hard rule of this process: **a PR carrying `needs-qa` must not merge unt
 - The gate is satisfied when a QA reviewer tests the PR and applies `qa-approved`.
 - **`qa-approved` is pinned to a commit.** The comment that grants it — the QA reviewer's note, or the self-QA evidence comment — carries the line `QA head: <sha>` for the head that was tested. A push after that line leaves the label in place but stales it: `om-merge-buddy` reports "QA evidence older than head", and `om-approve-merge-pr` asks for confirmation before merging. The way back is a QA reviewer re-testing, or stating on the PR that the new commits do not touch the tested scope, with a fresh `QA head:` line.
 - **Self-QA exception**: when no QA reviewer has capacity in time, any engineer — or `om-auto-qa-pr --self-qa-signoff` — may sign off instead, on a `risk-low` or `risk-medium` PR only. The evidence attached to the PR names the scenario exercised, the environment, the test data, the observed result, the negative cases tried, and the `QA head:` line. Then apply both `qa-approved` (so the gate passes) and `qa-self-verified` (so the exception is auditable). No evidence, no `qa-approved`.
+- **Who is the QA reviewer in this repo.** The two developers are `jakubix2000` and `WanSpi`: whoever did not write the PR does the QA. If that person cannot do it within two working days, `prz10` does it. The self-QA exception above applies to `risk-low` and `risk-medium` only.
 - **No self-QA on `risk-high`.** A PR labeled `risk-high`, or one whose diff touches auth, sessions, data scoping, money, schema migrations, or shared contracts (the `risk-high` inference above), needs a QA reviewer, or a maintainer's explicit exception stated on the PR; `om-auto-qa-pr` withholds the sign-off on such a PR and posts the evidence only. A change to auth or money also needs a second person's review regardless of the QA path.
 
 ## The claim protocol
@@ -123,6 +124,7 @@ Every PR passes the full validation gate before review sign-off, in this order:
 - `find asapchat -name '*.php' -print0 | xargs -0 -n1 php -l`
 - `vendor/bin/php-cs-fixer fix --dry-run --diff`
 - `vendor/bin/phpstan analyse asapchat`
+- `vendor/bin/phpunit`
 
 Any non-zero exit fails the gate and blocks the PR. The implementing skills run the gate before opening a PR, and `om-check-and-commit` runs it before pushing a hand-worked branch. The command list lives in `.ai/agentic.config.json`; when it changes, update it there and in this section together.
 

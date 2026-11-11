@@ -9,7 +9,8 @@
     "commands": [
       "find asapchat -name '*.php' -print0 | xargs -0 -n1 php -l",
       "vendor/bin/php-cs-fixer fix --dry-run --diff",
-      "vendor/bin/phpstan analyse asapchat"
+      "vendor/bin/phpstan analyse asapchat",
+      "vendor/bin/phpunit"
     ]
   },
   "labels": {
@@ -64,13 +65,14 @@
     "runs": ".ai/runs",
     "analysis": ".ai/analysis",
     "specs": ".ai/specs",
-    "dataModel": ".ai/data-model",
-    "prototypes": ".ai/prototypes",
     "scripts": ".ai/scripts",
     "qa": ".ai/qa"
   },
   "reviewChecklist": null,
   "closeKeywords": [
+    "closes",
+    "fixes",
+    "resolves",
     "zamyka",
     "naprawia",
     "rozwiązuje"
