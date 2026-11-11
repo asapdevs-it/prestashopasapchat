@@ -191,7 +191,7 @@ Do pracy nad wtyczką nie potrzebujesz kodu backendu.
 6. Nowe konto: kliknij „Połącz” w przeglądarce bez sesji AsapChat i wybierz „Załóż darmowe konto”. Po kreatorze musisz wrócić na ekran zgody, a potem do wtyczki.
 7. Potrzebujesz zmiany w kontrakcie (nowe pole, nowa platforma): issue w repo wtyczki z etykietą `needs-backend`. Nie obchodź braków po swojej stronie.
 
-Do dnia wdrożenia API na produkcji pracuj na przykładowej odpowiedzi z punktu 4 jako stałej odpowiedzi klienta HTTP w testach.
+API działa na produkcji (`https://panel.asapchat.io`), możesz łączyć się z nim od razu z własnego sklepu testowego. W testach automatycznych używaj przykładowej odpowiedzi z punktu 4 jako stałej odpowiedzi klienta HTTP.
 
 ## 8. Czego wtyczce nie wolno
 
