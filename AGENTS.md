@@ -58,7 +58,7 @@ Ręcznie przed wydaniem: zip na https://validator.prestashop.com, zero błędów
 
 ## Czego agent nie robi nigdy
 
-- Nie przenosi niczego z gałęzi `legacy`: żadnego pull API, routera po `REQUEST_URI`, endpointu `?debug`.
+- Nie przenosi niczego z gałęzi `legacy`: żadnego pull API, routera po `REQUEST_URI`, endpointów diagnostycznych.
 - Nie dodaje synchronizacji zamówień ani produktów.
 - Nie wpisuje `shop_id`, tokenu ani domeny na sztywno. Wszystko pochodzi z `GET /api/plugin/v1/config`.
 - Nie prosi o hasło AsapChat i go nie zapisuje.

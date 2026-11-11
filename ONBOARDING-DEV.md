@@ -55,7 +55,7 @@ npx skills add https://github.com/open-mercato/skills.git --skill '*'
 
 - Zakres v1 to trzy funkcje. Pomysł na czwartą: nowe issue, nie dodatkowy kod w PR.
 - Żadnych sekretów w repo: tokenów, haseł, kluczy API, danych klientów. Dane dostępowe do kont wydawcy trzymamy w firmowym menedżerze haseł.
-- Żadnych endpointów diagnostycznych, które coś zwracają bez autoryzacji. Stary prototyp miał `?debug=1` zwracający klucz API. To się nie może powtórzyć.
+- Żadnych endpointów diagnostycznych, które coś zwracają bez autoryzacji.
 - Kod z gałęzi `legacy` służy tylko do wglądu. Nie kopiujemy z niego niczego.
 - Teksty dla użytkownika: po polsku forma „Ty”, bez pauz (znaku —), krótko. Wersja angielska obowiązkowa tam, gdzie wymaga jej katalog.
 - Zanim zaczniesz konto wydawcy na platformie, przeczytaj `docs/accounts.md`. Każde konto ma mieć Kamila jako współwłaściciela od pierwszego dnia.

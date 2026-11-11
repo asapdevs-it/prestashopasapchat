@@ -30,7 +30,7 @@ Dokładnie trzy rzeczy:
 | Kanał 1: zip w GitHub Releases | Bez bramki. Wydajemy od razu po przejściu definicji ukończenia |
 | Kanał 2: PrestaShop Addons | **Zablokowane** do pisemnej odpowiedzi PrestaShop partner support: czy zwykły sprzedawca może wystawić darmowy moduł i czy obowiązuje opłata 99 EUR rocznie. Do tego czasu nie płacimy i nie przechodzimy KYC |
 
-Gałąź `legacy` zawiera prototyp z 2024 roku. Służy tylko jako archiwum. Nie kopiuj z niego kodu (ma wpisany na sztywno sklep klienta i endpoint `?debug=1`, który ujawnia klucz).
+Gałąź `legacy` zawiera prototyp z 2024 roku. Służy tylko jako archiwum. Nie kopiuj z niego kodu.
 
 ## Zacznij tutaj (kolejność czytania)
 

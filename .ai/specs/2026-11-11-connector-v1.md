@@ -176,7 +176,7 @@ Dla każdej kombinacji wersji i motywu: skrypt czatu i wyszukiwarki widoczny w �
 
 Prototyp z 2024 roku ma inną nazwę techniczną: `prestashopasapchat`. PrestaShop traktuje go jako osobny moduł, więc nie ma automatycznej aktualizacji.
 
-1. Sklep z prototypem musi go **odinstalować** i usunąć katalog `modules/prestashopasapchat/`. Powód: prototyp ma endpoint `?debug=1`, który bez autoryzacji zwraca zapisany klucz API.
+1. Sklep z prototypem musi go **odinstalować** i usunąć katalog `modules/prestashopasapchat/`. Powód: prototyp nie spełnia wymagań bezpieczeństwa nowej wersji.
 2. Potem instaluje `asapchat` i łączy sklep przyciskiem.
 3. Nowy moduł w `install()` sprawdza `Module::isInstalled('prestashopasapchat')` i pokazuje na ekranie konfiguracji ostrzeżenie z tą instrukcją. Nie odinstalowuje go sam.
 4. Listę sklepów z prototypem i unieważnienie kluczy prowadzi właściciel poza tym repo.
