@@ -82,7 +82,7 @@ Ponowne połączenie tego samego sklepu AsapChat z tego samego hosta unieważnia
 
 ## 3. Połączenie kluczem instalacyjnym (zapas)
 
-Użytkownik generuje klucz w panelu: edycja sklepu → link „Wtyczka” → „Klucz instalacyjny” (adres tej strony to `links.plugin` z `config`), i wkleja go w polu wtyczki. Przy generowaniu wybiera platformę, od niej zależy sekcja `plugin` w `config`. Klucz to od razu token `ack_...`.
+Użytkownik generuje klucz w panelu: edycja sklepu → link „Wtyczka” → „Klucz instalacyjny” (adres tej strony to `links.plugin` z `config`), i wkleja go w polu wtyczki. Przy generowaniu wybiera platformę, od niej zależy sekcja `plugin` w `config`. Klucz wygenerowany dla innej platformy działa, ale `plugin.*` opisuje wtedy tamtą platformę (np. brak informacji o nowej wersji): w instrukcji przy polu klucza napisz, którą platformę wybrać. Klucz to od razu token `ack_...`.
 Wtyczka woła `GET /config` z nagłówkiem `X-Site-Url`. Pierwsze wywołanie wiąże klucz z tym hostem. Na innym hoście klucz zwraca `409`.
 Klucz trzeba użyć w ciągu 24 godzin od wygenerowania, potem wygasa (`401`).
 Klucz to jedyna droga, gdy przycisk nie może zadziałać: sklep po `http`, panel administracyjny na innej domenie niż sklep (multistore, aplikacje hostowane). `X-Site-Url` może być po `http`, liczy się sam host.
@@ -206,7 +206,7 @@ Do pracy nad wtyczką nie potrzebujesz kodu backendu.
    Plan Free to jeden sklep na konto. Do testu dwóch sklepów (multistore) i do ponownego testu ścieżki „nowe konto” załóż kolejne konto na inny adres e-mail.
 3. Po połączeniu host Twojej strony jest automatycznie dopuszczony do widgetu, czat ładuje się też na `localhost`.
 4. Klucz instalacyjny i podgląd połączeń: panel, Sklep → Wtyczka. Tam też odwołasz połączenie, żeby sprawdzić obsługę `401`.
-5. Przypadki do przeklikania przed każdym PR: połączenie przyciskiem, „Anuluj”, powrót ze złym `state`, klucz instalacyjny, odwołanie w panelu (401), brak sieci (skrypty dalej się wstawiają), rozłączenie, odinstalowanie.
+5. Przypadki do przeklikania przed każdym PR, który dotyka połączenia, wstawiania skryptów albo rozłączenia (te, które Twoja platforma ma): połączenie przyciskiem, „Anuluj”, powrót ze złym `state`, klucz instalacyjny, odwołanie w panelu (401), brak sieci (skrypty dalej się wstawiają), rozłączenie, odinstalowanie.
 6. Nowe konto: kliknij „Połącz” w przeglądarce bez sesji AsapChat i wybierz „Załóż darmowe konto”. Po kreatorze musisz wrócić na ekran zgody, a potem do wtyczki.
 7. Potrzebujesz zmiany w kontrakcie (nowe pole, nowa platforma): issue w repo wtyczki z etykietą `needs-backend`. Nie obchodź braków po swojej stronie.
 
