@@ -2,7 +2,7 @@
 
 Ten plik jest identyczny w każdym repo wtyczki. Źródło prawdy: spec `.ai/specs/2026-11-11-plugin-connect.md` w repo backendu `asapdevs-it/asapchat`. Jeśli coś tu się nie zgadza z backendem, wygrywa backend, a różnicę zgłoś jako issue.
 
-**Stan:** kontrakt zaprojektowany, backend jeszcze go nie implementuje. Dopóki endpointy nie działają, wtyczkę testuj na atrapie (mock) zwracającej odpowiedzi z tego pliku.
+**Stan:** kontrakt zaprojektowany, backend jeszcze go nie implementuje. Dopóki endpointy nie działają, wtyczkę testuj na atrapie (mock), czyli małym lokalnym serwerze, który zwraca przykładowe odpowiedzi z tego pliku. Dlatego adres bazowy `https://panel.asapchat.io` musi dać się podmienić w środowisku deweloperskim (stała albo zmienna środowiskowa, nigdy pole w ustawieniach). Atrapę dodaje pierwsze issue, które jej potrzebuje.
 
 ## Słownik
 
@@ -18,8 +18,9 @@ Ten plik jest identyczny w każdym repo wtyczki. Źródło prawdy: spec `.ai/spe
 
 1. Sprzedawca klika „Połącz z AsapChat”. To kliknięcie jest zgodą na kontakt z naszym serwerem. Przed nim wtyczka nie wysyła do nas nic.
 2. Wtyczka losuje i zapisuje po stronie serwera (ważne 10 minut, powiązane z zalogowanym administratorem):
-   - `state`: 32 losowe bajty, zapis szesnastkowy,
-   - `code_verifier`: 32 losowe bajty, base64url bez `=`.
+   - `state`: co najmniej 32 losowe znaki z generatora kryptograficznego platformy,
+   - `code_verifier`: 43 do 128 losowych znaków z zestawu `A-Z a-z 0-9 - . _ ~`.
+   Sposób losowania i miejsce zapisu podaje spec danej wtyczki.
 3. Wtyczka przekierowuje przeglądarkę na:
 
 ```
@@ -27,7 +28,7 @@ GET https://panel.asapchat.io/connect
   ?v=1
   &platform=wordpress            (wordpress | prestashop | magento)
   &site_url=https://sklep.pl     (adres strony głównej sklepu)
-  &return_url=https://sklep.pl/wp-admin/admin.php?page=asapchat&asapchat_callback=1
+  &return_url=<adres obsługi powrotu we wtyczce, zakodowany; dokładny adres podaje spec danej wtyczki>
   &state=<state>
   &code_challenge=<base64url(sha256(code_verifier))>
 ```

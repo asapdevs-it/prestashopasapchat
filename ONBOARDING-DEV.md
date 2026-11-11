@@ -4,7 +4,7 @@ Czytasz to raz, pierwszego dnia. Potem pracujesz z issues.
 
 ## 1. Co budujemy
 
-Oficjalne wtyczki AsapChat dla platform sklepowych. Każda robi trzy rzeczy: łączy sklep z kontem AsapChat, wstrzykuje skrypt czatu i wyszukiwarki, pokazuje status. Nic więcej. Pełny obraz ze wszystkimi mockami: strona planu (link w README).
+Oficjalne wtyczki AsapChat dla platform sklepowych. Każda robi trzy rzeczy: łączy sklep z kontem AsapChat, wstrzykuje skrypt czatu i wyszukiwarki, pokazuje status. Nic więcej. Pełny obraz ze wszystkimi mockami: strona planu. Link dostaniesz od Kamila.
 
 Repozytoria (organizacja `asapdevs-it`):
 
@@ -28,6 +28,8 @@ Repozytoria (organizacja `asapdevs-it`):
 4. `docs/mockups/*.html`: otwórz w przeglądarce, tak mają wyglądać ekrany
 5. `docs/marketplace-listing.md` i `docs/accounts.md`: wymagania katalogu i konta
 6. `AGENTS.md`, `SDLC.md`, `CODE_REVIEW.md`: zasady pracy
+
+Jeśli `README.md` podaje inną kolejność, obowiązuje ta stąd. `SDLC.md` jest wspólny dla wszystkich repo firmy i opisuje cały proces po angielsku. Wymienia skille (`om-...`), których nie musisz znać na start: wystarczą te z punktu 4. Wzmianki o `BACKWARD_COMPATIBILITY.md` i `.uxproof/` nie dotyczą repo wtyczek.
 
 ## 3. Narzędzia
 
@@ -56,9 +58,9 @@ npx skills add https://github.com/open-mercato/skills.git --skill '*'
 - Zakres v1 to trzy funkcje. Pomysł na czwartą: nowe issue, nie dodatkowy kod w PR.
 - Żadnych sekretów w repo: tokenów, haseł, kluczy API, danych klientów. Dane dostępowe do kont wydawcy trzymamy w firmowym menedżerze haseł.
 - Żadnych endpointów diagnostycznych, które coś zwracają bez autoryzacji.
-- Kod z gałęzi `legacy` służy tylko do wglądu. Nie kopiujemy z niego niczego.
+- Kod prototypu (gałąź `legacy`, a w dwóch starszych repo także stare pliki na `main`, dopóki nie usunie ich pierwsze issue) służy tylko do wglądu. Nie kopiujemy z niego niczego.
 - Teksty dla użytkownika: po polsku forma „Ty”, bez pauz (znaku —), krótko. Wersja angielska obowiązkowa tam, gdzie wymaga jej katalog.
-- Zanim zaczniesz konto wydawcy na platformie, przeczytaj `docs/accounts.md`. Każde konto ma mieć Kamila jako współwłaściciela od pierwszego dnia.
+- Zanim zaczniesz konto wydawcy na platformie, przeczytaj `docs/accounts.md`. Każde konto ma dać Kamilowi dostęp tak wcześnie, jak platforma pozwala. Jak dokładnie, mówi `docs/accounts.md`.
 
 ## 6. Kiedy pytać
 

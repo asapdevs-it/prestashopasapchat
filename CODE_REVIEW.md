@@ -22,7 +22,7 @@ Plik czyta automatycznie `om-code-review`. Bramka walidacji: `.ai/agentic.config
 - Żadnego żądania HTTP do AsapChat podczas renderowania strony sklepu. Konfiguracja tylko z lokalnego zapisu.
 - Skrypty jako prawdziwe znaczniki `<script>` z atrybutami z konfiguracji, każda wartość zakodowana jako atrybut HTML.
 - Brak połączenia, wyłączony przełącznik albo `enabled: false`: zero znaczników w HTML.
-- Błąd 5xx lub timeout przy odświeżaniu nie usuwa działającej konfiguracji; 401 i 410 usuwają.
+- Błąd 5xx lub timeout przy odświeżaniu nie usuwa działającej konfiguracji; 401, 409 i 410 zatrzymują wstrzykiwanie i pokazują stan „Połącz ponownie”.
 
 **Zgoda i prywatność**
 - Zero wywołań do AsapChat przed kliknięciem „Połącz” lub zapisaniem klucza.
@@ -43,6 +43,6 @@ Plik czyta automatycznie `om-code-review`. Bramka walidacji: `.ai/agentic.config
 ## Severity
 
 - **Blocker:** wyciek tokenu, brak sprawdzenia uprawnień lub `state`, żądanie HTTP na stronie sklepu, wywołanie przed zgodą, endpoint debug, sekret w repo, złamana reguła katalogu, kod spoza zakresu v1.
-- **Major:** brak testu zmiany zachowania, brak tłumaczenia, niepełne odinstalowanie, brak obsługi 401/410.
+- **Major:** brak testu zmiany zachowania, brak tłumaczenia, niepełne odinstalowanie, brak obsługi 401/409/410.
 - **Minor/Nit:** styl, nazewnictwo, drobne uproszczenia (nie blokują).
 - Czerwone CI lub konflikt zbierane razem z pozostałymi uwagami, nie zamiast przeglądu.
