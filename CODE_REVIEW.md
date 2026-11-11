@@ -37,7 +37,7 @@ Plik czyta automatycznie `om-code-review`. Bramka walidacji: `.ai/agentic.config
 ## Testy
 
 - Zmiana zachowania w logice bez zależności od PrestaShop ma test jednostkowy (`tests/`, zakres w `AGENTS.md`, sekcja Testy). Zmiana w hookach, ekranie i instalacji ma dowód z QA (zrzuty, ścieżki macierzy). Błąd ma najpierw test, który go odtwarza, o ile da się go odtworzyć bez sklepu.
-- Zmiany `risk-high` (połączenie, token, podpisy, webhooki) wymagają testu ścieżki odmowy (zły `state`, brak uprawnień, zły podpis) i drugiej osoby w review. QA takiej zmiany robi inna osoba niż autor.
+- Zmiany `risk-high` (połączenie, token, podpisy, webhooki) wymagają testu ścieżki odmowy (zły `state`, brak uprawnień, zły podpis) i drugiej osoby w review. QA robi deweloper, który nie pisał PR (`jakubix2000` albo `WanSpi`), a gdy nie może w ciągu dwóch dni roboczych, `prz10`. Self-QA jest dozwolone tylko przy `risk-low` i `risk-medium` (`SDLC.md`), nigdy przy `risk-high`.
 - Zmiana ekranu: zrzuty wszystkich stanów (niepołączony, połączony, błąd) na szerokości 390 px i desktop.
 
 ## Severity

@@ -15,7 +15,7 @@ Proces pracy: `SDLC.md`. Specyfikacja: `.ai/specs/2026-11-11-connector-v1.md`. K
 asapchat/
   asapchat.php                      klasa modułu: install, uninstall, hooki, getContent
   config.xml                        generowany przez PrestaShop
-  logo.png                          57x57, zrobione z logo SVG w zadaniu 01
+  logo.png                          57x57, białe logo na kwadracie #161616, zadanie 01
   index.php                         w KAŻDYM katalogu
   .htaccess                         blokada bezpośredniego uruchamiania PHP
   classes/AsapchatClient.php        wywołania API (token, config, settings, disconnect)
@@ -67,9 +67,12 @@ vendor/bin/phpunit
 
 Narzędzia przychodzą z `composer install` (zadanie 01 dodaje `composer.json`):
 
-- `prestashop/php-dev-tools`: z niego bierzesz konfigurację `php-cs-fixer` (`.php-cs-fixer.dist.php` oparty o `PrestaShop\CodingStandards\CsFixer\Config`).
-- `phpstan/phpstan`, poziom 5, plik `phpstan.neon`. Klasy PrestaShop phpstan bierze z kodu PrestaShop wskazanego zmienną `_PS_ROOT_DIR_`: lokalnie katalog sklepu z Dockera, w CI pobrany kod PrestaShop.
-- `phpunit/phpunit`, plik `phpunit.xml.dist`, testy w `tests/`.
+- `require-dev`: `prestashop/php-dev-tools`, `friendsofphp/php-cs-fixer`, `prestashop/header-stamp`, `phpstan/phpstan`, `phpunit/phpunit:^9.6`. Dwa środkowe pakiety wpisujesz osobno, bo `php-dev-tools` tylko je sugeruje.
+- `.php-cs-fixer.dist.php` oparty o `PrestaShop\CodingStandards\CsFixer\Config` z `prestashop/php-dev-tools`.
+- `phpstan.neon`, poziom 5. Klasy PrestaShop phpstan bierze z kodu PrestaShop w katalogu `.ps-src` (wpisany do `.gitignore`), na który wskazuje `_PS_ROOT_DIR_`. W CI: `git clone --depth 1 --branch 8.1.x https://github.com/PrestaShop/PrestaShop .ps-src`. Lokalnie: `docker cp <kontener sklepu 8.1>:/var/www/html .ps-src`.
+- `phpunit.xml.dist`, testy w `tests/`. PHPUnit 9.6 działa na PHP 7.4, 8.1 i 8.3.
+
+Tego zestawu nikt jeszcze nie uruchamiał: zadanie 01 sprawdza nazwy pakietów, nazwę gałęzi PrestaShop i ścieżkę w kontenerze, i poprawia ten akapit, jeśli coś się nie zgadza.
 
 Przed zadaniem 01 dwie środkowe komendy i testy nie mają na czym działać. To zadanie 01 je uruchamia.
 
@@ -97,7 +100,7 @@ Opcjonalnie przed wydaniem: wgraj zip na https://validator.prestashop.com. Wymag
 - Nie dodaje synchronizacji zamówień ani produktów. Nie tworzy klucza Webservice za sprzedawcę.
 - Nie pobiera i nie instaluje aktualizacji modułu. Pokazuje tylko pasek z linkiem do zipa.
 - Nie zmienia `docs/CONNECT-API.md`. Potrzebna zmiana kontraktu: issue z etykietą `needs-backend` i oznaczeniem `prz10`.
-- Nie merguje inaczej niż przez squash i nie wpisuje w PR polskich słów zamykających: tylko `Closes #N`.
+- Merguje przez squash (umowa zespołu) i w PR wpisuje `Closes #N`: GitHub zamyka issue tylko po angielskim słowie.
 - Nie wpisuje `shop_id`, tokenu ani domeny na sztywno. Wszystko pochodzi z `GET /api/plugin/v1/config`.
 - Nie prosi o hasło AsapChat i go nie zapisuje.
 - Nie loguje tokenu `ack_...` ani kodu jednorazowego.

@@ -70,6 +70,9 @@
   },
   "reviewChecklist": null,
   "closeKeywords": [
+    "closes",
+    "fixes",
+    "resolves",
     "zamyka",
     "naprawia",
     "rozwiązuje"

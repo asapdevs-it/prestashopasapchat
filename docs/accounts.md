@@ -11,7 +11,7 @@ Moduł rozdajemy sami jako zip. Nie potrzebujesz żadnego konta sprzedawcy ani o
 | Publikacja wydania w GitHub Releases | CI po wypchnięciu tagu (workflow wydania dodaje zadanie 14). Gdy CI nie działa: deweloper ręcznie |
 | Ustawienie wersji w backendzie AsapChat | tylko Kamil |
 
-Uprawnienia: do tworzenia tagów i wydań potrzebujesz roli „Write” w repo. Nadaje ją Kamil.
+Uprawnienia: do tworzenia tagów i wydań potrzebujesz roli „Write” w repo. Masz ją w zaproszeniu z GitHuba, wystarczy je przyjąć.
 
 ## Numer wersji
 

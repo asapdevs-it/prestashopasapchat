@@ -35,7 +35,7 @@ Nie wysyłamy pytań do supportów platform. To repo nie zgłasza niczego do ża
 ## 3. Narzędzia
 
 1. Zainstaluj `gh` (2.82.1 lub nowszy) i `jq`. Zaloguj się: `gh auth login`.
-2. Zainstaluj Dockera, PHP (7.4 albo nowsze) i Composera. Po zadaniu 01 `composer install` w katalogu repo daje `php-cs-fixer`, `phpstan` i `phpunit`.
+2. Zainstaluj Dockera, PHP (7.4 albo nowsze) i Composera. Po zadaniu 01 `composer install` w katalogu repo daje `php-cs-fixer`, `header-stamp`, `phpstan` i `phpunit`.
 3. Agent AI (Claude Code albo Codex CLI) jest opcjonalny. Jeśli go używasz, to na własnej subskrypcji. Bez agenta robisz te same kroki ręcznie.
 4. Jeśli używasz agenta, zainstaluj skille SDLC (raz na komputer):
 
@@ -47,7 +47,52 @@ npx skills add https://github.com/open-mercato/skills.git --skill '*'
 
 ### Sklep lokalny
 
-Używaj oficjalnych obrazów Dockera `prestashop/prestashop` z domyślnym PHP obrazu: tagi `1.7.8`, `8.1` i `9.0`. Każdy obraz potrzebuje kontenera MySQL (opis w dokumentacji obrazu na Docker Hub). Sklep wystaw na `http://localhost:PORT`, bo tylko `localhost` i `127.0.0.1` łączą się bez `https` (kontrakt, punkt 7). Katalog `asapchat/` z repo zamontuj jako `modules/asapchat`.
+Używaj oficjalnych obrazów Dockera `prestashop/prestashop` z domyślnym PHP obrazu: tagi `1.7.8`, `8.1` i `9.0`. Każdy obraz potrzebuje kontenera MySQL. Sklep wystaw na `http://localhost:PORT`, bo tylko `localhost` i `127.0.0.1` łączą się bez `https` (kontrakt, punkt 7). Katalog `asapchat/` z repo zamontuj jako `modules/asapchat`.
+
+Przepis na `docker-compose.yml` (plik tworzy zadanie 01 i wtedy sprawdza ten przepis, nikt go jeszcze nie uruchamiał):
+
+```yaml
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+  ps178:
+    image: prestashop/prestashop:1.7.8
+    depends_on: [db]
+    ports: ["8178:80"]
+    environment: &ps
+      DB_SERVER: db
+      DB_PASSWD: root
+      DB_NAME: ps178
+      PS_INSTALL_AUTO: 1
+      PS_DEV_MODE: 1
+      PS_DOMAIN: localhost:8178
+      PS_FOLDER_ADMIN: admin-dev
+      ADMIN_MAIL: dev@example.com
+      ADMIN_PASSWD: prestashop_dev
+    volumes: ["./asapchat:/var/www/html/modules/asapchat"]
+  ps81:
+    image: prestashop/prestashop:8.1
+    depends_on: [db]
+    ports: ["8181:80"]
+    environment:
+      <<: *ps
+      DB_NAME: ps81
+      PS_DOMAIN: localhost:8181
+    volumes: ["./asapchat:/var/www/html/modules/asapchat"]
+  ps90:
+    image: prestashop/prestashop:9.0
+    depends_on: [db]
+    ports: ["8190:80"]
+    environment:
+      <<: *ps
+      DB_NAME: ps90
+      PS_DOMAIN: localhost:8190
+    volumes: ["./asapchat:/var/www/html/modules/asapchat"]
+```
+
+Panel: `http://localhost:PORT/admin-dev`, login i hasło z `ADMIN_MAIL` i `ADMIN_PASSWD` (dane tylko lokalne). Pierwszy start trwa kilka minut, bo obraz instaluje sklep.
 
 - Tryb debug: `PS_DEV_MODE=1` w zmiennych kontenera.
 - Multistore: w panelu sklepu Preferencje (Konfiguruj), Ogólne, „Włącz multistore”, potem Zaawansowane, Multistore, dodaj drugi sklep z adresem w podkatalogu.
@@ -61,9 +106,9 @@ Używaj oficjalnych obrazów Dockera `prestashop/prestashop` z domyślnym PHP ob
 2. Powiedz agentowi: `/om-fix <numer GitHub>` (małe zadanie) albo `/om-auto-create-pr <numer GitHub>` (większe). W komendach i w `Closes` podajesz numer GitHub (`#N`), w rozmowie i w dokumentach prefiks z tytułu. Agent przypisze issue do Ciebie, doda `in-progress`, zrobi gałąź, kod, testy i PR.
 3. Przeczytaj cały diff, zanim poprosisz o review. Agent myli się pewnym tonem. Ty odpowiadasz za kod.
 4. Bramka walidacji (komendy z `AGENTS.md`, te same są w `.ai/agentic.config.json`) musi przejść lokalnie.
-5. PR do `main`. Każdy PR zatwierdza Kamil (`prz10`): wymusza to `.github/CODEOWNERS` i ochrona gałęzi. Zanim poprosisz o zatwierdzenie, przegląd robi drugi deweloper albo `/om-auto-review-pr <numer PR>`.
-6. PR z `needs-qa` czeka na `qa-approved`: zmianę przeklikuje w prawdziwym panelu sklepu drugi deweloper (sprawdzacie nawzajem swoje PR) i dołącza zrzuty ekranu. Przy `risk-high` nigdy nie sprawdzasz własnego PR.
-7. Merge tylko przez squash: `main` wymaga podpisanych commitów, a commit ze squasha podpisuje GitHub. W opisie PR wpisz `Closes #N` (numer GitHub). GitHub zamyka issue tylko po angielskim słowie.
+5. PR do `main`. Każdy PR zatwierdza Kamil (`prz10`): wymusza to `.github/CODEOWNERS` i ochrona gałęzi. Zanim poprosisz o zatwierdzenie, przegląd robi drugi deweloper (deweloperzy to `jakubix2000` i `WanSpi`) albo `/om-auto-review-pr <numer PR>`.
+6. PR z `needs-qa` czeka na `qa-approved`: zmianę przeklikuje w prawdziwym panelu sklepu drugi deweloper i dołącza zrzuty ekranu. Z pary `jakubix2000` i `WanSpi` QA robi ten, kto nie pisał PR. Jeśli nie może tego zrobić w ciągu dwóch dni roboczych, QA robi `prz10` (oznacz go w PR). Przy `risk-low` i `risk-medium` obowiązuje wyjątek z `SDLC.md` (self-QA z dowodami i etykietą `qa-self-verified`), gdy druga osoba nie ma czasu. Przy `risk-high` wyjątku nie ma: nigdy nie sprawdzasz własnego PR.
+7. Merge robimy przez squash. To umowa zespołu, repo dopuszcza też inne tryby, więc wybierz „Squash and merge” ręcznie. W opisie PR wpisz `Closes #N` (numer GitHub). GitHub zamyka issue tylko po angielskim słowie.
 
 ## 5. Zasady, których nie łamiemy
 
@@ -83,8 +128,7 @@ Gdy spec i mockup mówią co innego, nie pytaj: spec rozstrzyga zachowanie i tek
 
 | Co | Kiedy |
 |---|---|
-| Rola „Write” w repo (gałęzie, etykiety, tagi) | przed pierwszym zadaniem |
 | Zatwierdzenie każdego PR | przy każdym PR |
 | Ustawienie numeru wersji i adresów w backendzie AsapChat | po każdym wydaniu (`docs/accounts.md`) |
 
-Nic więcej: konto AsapChat do testów zakładasz sam (kontrakt, punkt 7).
+Nic więcej: rolę „Write” w repo masz już w zaproszeniu z GitHuba (wystarczy je przyjąć), a konto AsapChat do testów zakładasz sam (kontrakt, punkt 7).

@@ -166,7 +166,7 @@ Przełącznik „Dodawanie do koszyka” jest nieaktywny, gdy wyszukiwarka jest 
 
 | Pole | Pole API | Kontrolka | Reguła |
 |---|---|---|---|
-| Nazwa asystenta | `bot_name` | pole tekstowe | do 40 znaków |
+| Nazwa asystenta | `bot_name` | pole tekstowe | wymagane, 1 do 40 znaków (puste = błąd pola) |
 | Kolor główny | `main_color` | `<input type="color">` i pole tekstowe z kodem | `#rrggbb` |
 | Pozycja czatu | `position` | dwa kafelki: „Prawy dolny róg” (`right-bottom`), „Lewy dolny róg” (`left-bottom`) | jedna z dwóch wartości |
 | Powitanie 1 | `greeting_1` | pole tekstowe | do 120 znaków, puste = bez dymka |
@@ -528,7 +528,7 @@ Multistore:
 
 ## 14. Tłumaczenia
 
-Teksty źródłowe w kodzie po angielsku (`$this->l('...')` i `{l s='...' mod='asapchat'}`). Polski w `translations/pl.php`. Polskie teksty są w tym dokumencie i w mockupie: forma „Ty”, krótko, bez znaku pauzy.
+Teksty źródłowe w kodzie po angielsku (`$this->l('...')` i `{l s='...' mod='asapchat'}`). Polski w `translations/pl.php`. Komplet tekstów po angielsku i po polsku jest w punkcie 20: forma „Ty”, krótko, bez znaku pauzy. Mockup pokazuje układ, nie jest źródłem tekstów.
 
 ## 15. Lista bezpieczeństwa
 
@@ -618,16 +618,19 @@ Etykiety: `feature`, `priority-high`, `risk-low`, `skip-qa`
 
 - Katalog `asapchat/` ma strukturę z `AGENTS.md`. Moduł instaluje się i odinstalowuje na PrestaShop 1.7.8, 8 i 9 bez notice.
 - Stała `ASAPCHAT_BASE` jest zdefiniowana i da się ją nadpisać.
-- W repo są `composer.json` (tylko `require-dev`), `.php-cs-fixer.dist.php`, `phpstan.neon`, `phpunit.xml.dist` i katalog `tests/` z pierwszym testem. Szczegóły: `AGENTS.md`, sekcje Walidacja i Testy.
+- W repo są `composer.json` (tylko `require-dev`: `prestashop/php-dev-tools`, `friendsofphp/php-cs-fixer`, `prestashop/header-stamp`, `phpstan/phpstan`, `phpunit/phpunit:^9.6`), `.php-cs-fixer.dist.php`, `phpstan.neon`, `phpunit.xml.dist`, `docker-compose.yml` (przepis: `ONBOARDING-DEV.md`, „Sklep lokalny”) i katalog `tests/` z pierwszym testem. Szczegóły: `AGENTS.md`, sekcje Walidacja i Testy.
+- phpstan ma kod PrestaShop w `.ps-src` (poza gitem): w CI płytki klon repo PrestaShop z gałęzi 8.1, lokalnie kopia `/var/www/html` z kontenera 8.1. Lista pakietów, przepis compose i sposób pobrania kodu nie były jeszcze uruchamiane: to zadanie je sprawdza i poprawia dokumenty, jeśli coś się nie zgadza.
 - CI uruchamia cztery komendy walidacji z `AGENTS.md` (składnia na PHP 7.2 i 8.4, testy na 7.4, 8.1, 8.3) i buduje `asapchat.zip` o poprawnej strukturze jako artefakt PR.
 - Pliki starego prototypu są usunięte z `main`: `prestashopasapchat.php`, `config.xml`, `config_pl.xml`, `index.php`, `controllers/` (w tym `controllers/front/asapchatApi.php`), `sql/`, `translations/`, `upgrade/` (w tym `upgrade/upgrade-1.1.0.php`), `views/` (w tym `views/img/logo.jpeg`), wszystkie `.DS_Store`. Na `main` zostaje katalog `asapchat/`, dokumenty projektu i pliki narzędzi.
-- `asapchat/logo.png` (57x57) jest zrobione z logo SVG. Fonty Open Sans są w `asapchat/views/fonts/`.
+- `asapchat/logo.png` (57x57): białe logo z `asapchat/views/img/asapchat-logo-white.svg` wyśrodkowane na kwadracie `#161616`. Fonty Open Sans są w `asapchat/views/fonts/`.
 
 ### 02. Ekran konfiguracji w stylu AsapChat: trzy stany (#3)
 
 Etykiety: `feature`, `priority-high`, `risk-low`, `needs-qa`
 
-- Ekran renderuje stany „Niepołączony”, „Połączony” i „Błąd” na danych przykładowych: układ z mockupu, teksty ze specyfikacji. Warianty z punktu 5.6 też są na zrzutach.
+- Ekran renderuje stany „Niepołączony”, „Połączony” i „Błąd” na danych przykładowych: układ z mockupu, teksty ze specyfikacji (w kodzie po angielsku, punkt 20).
+- Stany przełącza skrypt deweloperski `tests/fixtures/seed-state.php <stan>`, uruchamiany z wiersza poleceń w kontenerze sklepu. Skrypt ładuje `config/config.inc.php` i ustawia klucze `ASAPCHAT_*` przez `Configuration::updateValue` na dane przykładowe z kontraktu (punkty 4 i 7a). Leży poza katalogiem `asapchat/`, więc nie trafia do paczki. Komendy są opisane w PR. Żadnych parametrów w adresie ani trybu diagnostycznego.
+- Zrzuty w PR (390 px i 1280 px) obejmują: „Niepołączony”, „Niepołączony” bez przycisku (6.3), „Połączony” z `search.enabled=false`, „Połączony” z wyszukiwarką włączoną i jeszcze niewidzianą (przykład 7a), „Połączony” z notką o nieudanym odświeżeniu, „Połączony” z notką o `v` innym niż 1, „Połączony” z błędami pól, „Błąd” dla `401`, `409` i `410`, kontekst „Wszystkie sklepy” oraz pola sukcesu i informacji. Notki i błędy pól skrypt ustawia tym samym sposobem (klucz konfiguracji albo wartości formularza wpisane ręcznie).
 - Czarny pasek z logo, tokeny kolorów, przełączniki i pill są zgodne z punktem 5.1.
 - Każda reguła CSS zaczyna się od `.asapchat-app`, font Open Sans jest w paczce modułu.
 - Ekran działa na 390 px i 1280 px. Zrzuty obu szerokości są w PR.
@@ -696,6 +699,7 @@ Etykiety: `feature`, `priority-medium`, `risk-medium`, `needs-qa`
 
 - Pola są wypełnione wartościami z `settings`.
 - Zapis wysyła tylko zmienione pola i od razu zapisuje config z odpowiedzi.
+- Nazwa asystenta jest wymagana (1 do 40 znaków): pusta daje błąd pola przed wysłaniem.
 - Odpowiedź 422 (kształt: kontrakt, punkt 4) pokazuje przy właściwych polach teksty z punktu 5.6. Błąd sieci nie gubi wpisanych wartości.
 - Zmiana jest widoczna w panelu AsapChat i w atrybutach skryptu na stronie sklepu.
 
@@ -728,7 +732,7 @@ Etykiety: `feature`, `priority-medium`, `risk-medium`, `needs-qa`
 
 Etykiety: `documentation`, `priority-medium`, `risk-low`, `skip-qa`
 
-- Wszystkie teksty modułu przechodzą przez mechanizm tłumaczeń. `translations/pl.php` jest kompletny.
+- Wszystkie teksty modułu przechodzą przez mechanizm tłumaczeń. `translations/pl.php` jest kompletny i zgodny z tabelą w punkcie 20 (źródłem tekstów jest specyfikacja, nie mockup).
 - W tekstach nie ma znaku pauzy ani emoji.
 - Teksty w `docs/marketplace-listing.md` zgadzają się z tym, co moduł naprawdę robi i wysyła.
 
@@ -740,3 +744,133 @@ Etykiety: `feature`, `priority-medium`, `risk-low`, `needs-qa`
 - Workflow wydania jest w repo: tag `vX.Y.Z` buduje `asapchat.zip` i tworzy wydanie w GitHub Releases. Tag `v1.0.0` tworzy wydanie z notatką według szablonu.
 - Zip pobrany z wydania instaluje się na czystym sklepie.
 - Wersja, `download_url` i `changelog_url` są przekazane Kamilowi według `docs/accounts.md`. To issue jest issue wydania 1.0.0.
+
+## 20. Teksty UI: angielski (źródło) i polski (tłumaczenie)
+
+W kodzie wpisujesz tekst angielski (`$this->l('...')`, `{l s='...' mod='asapchat'}`). Polski trafia do `translations/pl.php`. `%s` i `%d` to miejsca na wartości (`sprintf`). Nazwy „AsapChat”, „AsapSearch”, „PrestaShop” i „Webservice” nie są tłumaczone. Teksty wspólne z wtyczką WordPress mają to samo brzmienie angielskie co tam. Gdy dodajesz tekst, którego tu nie ma, dopisz go do tej tabeli w tym samym PR.
+
+### Stan „Niepołączony” i multistore
+
+| EN (w kodzie) | PL |
+|---|---|
+| Connect your store to AsapChat | Połącz sklep z AsapChat |
+| The module will add an AI chat and the AsapSearch product search to your store. You do not need to paste anything into the theme. | Moduł doda do Twojego sklepu czat AI i wyszukiwarkę produktów AsapSearch. Nie musisz niczego wklejać do motywu. |
+| Connect to AsapChat | Połącz z AsapChat |
+| No account yet? You will create one in the next step, for free. | Nie masz konta? Założysz je w następnym kroku, za darmo. |
+| After you click, you will go to panel.asapchat.io. We will pass your store address there: %s. | Po kliknięciu przejdziesz do panel.asapchat.io. Przekażemy tam adres Twojego sklepu: %s. |
+| I have an install key | Mam klucz instalacyjny |
+| Install key | Klucz instalacyjny |
+| Connect with key | Połącz kluczem |
+| Connecting with the button will not work in this store, because the store panel runs under a different address than the store. Use an install key. | W tym sklepie połączenie przyciskiem nie zadziała, bo panel sklepu działa pod innym adresem niż sklep. Użyj klucza instalacyjnego. |
+| Select one store from the list at the top to connect it to AsapChat. | Wybierz jeden sklep z listy u góry, żeby go połączyć z AsapChat. |
+
+### Stan „Połączony”: nagłówek, status, widgety
+
+| EN (w kodzie) | PL |
+|---|---|
+| Open AsapChat panel | Otwórz panel AsapChat |
+| Connected (pill w nagłówku) | Połączono |
+| %1$s: %2$d AI conversations per month | %1$s: %2$d rozmów AI miesięcznie |
+| Disconnect | Rozłącz |
+| Disconnect the store? The chat and the search will disappear from your site. | Rozłączyć sklep? Czat i wyszukiwarka znikną ze strony. |
+| Status | Status |
+| Chat | Czat |
+| Chat is working | Czat działa |
+| Last seen on the site: %s | Ostatnio widziany na stronie: %s |
+| Not seen on the site yet | Jeszcze niewidziany na stronie |
+| Open your store in a new tab to check. | Otwórz sklep w nowej karcie, żeby sprawdzić. |
+| Search | Wyszukiwarka |
+| Search is working | Wyszukiwarka działa |
+| Search last seen on the site: %s | Ostatnio widziana na stronie: %s |
+| Search not seen on the site yet | Jeszcze niewidziana na stronie |
+| Refresh | Odśwież |
+| Open the store in a new tab | Otwórz sklep w nowej karcie |
+| Could not fetch the settings from AsapChat. We are using the last saved ones. | Nie udało się pobrać ustawień z AsapChat. Używamy ostatnich zapisanych. |
+| This version of the module is too old for AsapChat. Update the module. | Ta wersja modułu jest za stara dla AsapChat. Zaktualizuj moduł. |
+| Widgets | Widgety |
+| AsapSearch product search | Wyszukiwarka AsapSearch |
+| Add to cart from search | Dodawanie do koszyka z wyszukiwarki |
+| The search is not ready yet, because AsapChat does not have your products. | Wyszukiwarka nie jest jeszcze gotowa, bo AsapChat nie ma Twoich produktów. |
+| Connect products in AsapChat | Podłącz produkty w AsapChat |
+
+Mechanizm tłumaczeń modułów PrestaShop nie ma kontekstu, a po polsku tekst dla wyszukiwarki ma inny rodzaj niż dla czatu. Dlatego wersje dla wyszukiwarki mają własny tekst źródłowy („Search not seen...”, „Search last seen...”).
+
+### Stan „Połączony”: wygląd, gdzie pokazywać, źródła, aktualizacja, stopka
+
+| EN (w kodzie) | PL |
+|---|---|
+| Look | Wygląd |
+| These are the same settings as in the AsapChat panel. A change here is visible there and the other way round. | Te same ustawienia co w panelu AsapChat. Zmiana tutaj jest widoczna tam i odwrotnie. |
+| Assistant name | Nazwa asystenta |
+| Main color | Kolor główny |
+| Chat position | Pozycja czatu |
+| Bottom right corner | Prawy dolny róg |
+| Bottom left corner | Lewy dolny róg |
+| Greeting 1 | Powitanie 1 |
+| Greeting 2 | Powitanie 2 |
+| Where to show | Gdzie pokazywać |
+| Chat delay | Opóźnienie pojawienia się czatu |
+| seconds | sekund |
+| Excluded CMS pages | Wykluczone strony CMS |
+| Excluded categories | Wykluczone kategorie |
+| Excluded products (ID) | Wykluczone produkty (ID) |
+| Product IDs separated by commas. You will find the ID on the list: Catalog, then Products. | ID produktów po przecinku. ID znajdziesz na liście: Katalog, potem Produkty. |
+| Address contains | Adres zawiera |
+| Orders and products source | Źródło zamówień i produktów |
+| Thanks to this the assistant knows your products and answers questions about order status. | Dzięki temu asystent zna Twoje produkty i odpowiada na pytania o status zamówienia. |
+| Orders | Zamówienia |
+| Products | Produkty |
+| Connected | Podłączone |
+| Not connected | Niepodłączone |
+| Connect in AsapChat | Podłącz w AsapChat |
+| How to generate an API key in PrestaShop | Jak wygenerować klucz API w PrestaShop |
+| In the store menu go to Advanced Parameters, then Webservice. | W menu sklepu wejdź w Zaawansowane, potem API (Webservice). |
+| Turn on "Enable PrestaShop's webservice" and save. | Włącz opcję „Włącz usługę sieciową PrestaShop” i zapisz. |
+| Click "Add new webservice key", then "Generate". | Kliknij „Dodaj nowy klucz”, potem „Generuj”. |
+| In the permissions table tick only the GET column for: %s. | W tabeli uprawnień zaznacz tylko kolumnę GET dla: %s. |
+| Set the key status to "Yes" and save. | Ustaw status klucza na „Tak” i zapisz. |
+| Copy the key, click "Connect in AsapChat" and paste it there together with the store address. | Skopiuj klucz, kliknij „Podłącz w AsapChat” i wklej go tam razem z adresem sklepu. |
+| Version %s is available | Dostępna wersja %s |
+| You have version %s. Download the file and upload it in Modules, Module Manager, "Upload a module". The connection and the settings stay. | Masz wersję %s. Pobierz plik i wgraj go w Moduły, Menedżer modułów, „Załaduj moduł”. Połączenie i ustawienia zostają. |
+| Download asapchat.zip | Pobierz asapchat.zip |
+| What's new | Co nowego |
+| Settings fetched from AsapChat: %1$s. Module version: %2$s. | Ustawienia pobrane z AsapChat: %1$s. Wersja modułu: %2$s. |
+| Save changes | Zapisz zmiany |
+
+### Stan „Błąd” i komunikaty
+
+| EN (w kodzie) | PL |
+|---|---|
+| Connect the store again | Połącz sklep ponownie |
+| Disconnected (pill) | Rozłączono |
+| The connection was revoked in the AsapChat panel or the install key expired. | Połączenie zostało odwołane w panelu AsapChat albo klucz instalacyjny wygasł. |
+| This connection is assigned to another domain. Connect this store again. | To połączenie jest przypisane do innej domeny. Połącz ten sklep jeszcze raz. |
+| This shop was deleted in AsapChat. | Ten sklep został usunięty w AsapChat. |
+| The chat and the search are now turned off on the store site. | Czat i wyszukiwarka są teraz wyłączone na stronie sklepu. |
+| Your settings in this module (switches, delay, exclusions) have been kept. They will come back after you connect. | Twoje ustawienia w tym module (przełączniki, opóźnienie, wykluczenia) zostały zachowane. Wrócą po połączeniu. |
+| Connect again | Połącz ponownie |
+| Store connected to AsapChat. | Połączono sklep z AsapChat. |
+| Saved. | Zapisano. |
+| Disconnected. | Rozłączono. |
+| Connection cancelled. | Anulowano łączenie. |
+| Try connecting again. | Spróbuj połączyć ponownie. |
+| Could not connect. Try again or use an install key. | Nie udało się połączyć. Spróbuj ponownie albo użyj klucza instalacyjnego. |
+| The key has a wrong format. Copy it again from the AsapChat panel. | Klucz ma zły format. Skopiuj go jeszcze raz z panelu AsapChat. |
+| The key is invalid, revoked or expired. The key must be used within 24 hours of being generated. | Klucz jest nieprawidłowy, odwołany albo wygasł. Klucz trzeba użyć w ciągu 24 godzin od wygenerowania. |
+| This key is assigned to another domain. | Ten klucz jest przypisany do innej domeny. |
+| Could not connect to AsapChat. Try again in a moment. | Nie udało się połączyć z AsapChat. Spróbuj za chwilę. |
+| Module settings saved. The look could not be saved in AsapChat, try again in a moment. | Ustawienia modułu zapisane. Wyglądu nie udało się zapisać w AsapChat, spróbuj za chwilę. |
+
+### Błędy pól
+
+| EN (w kodzie) | PL |
+|---|---|
+| Enter a name, 40 characters at most. | Podaj nazwę, najwyżej 40 znaków. |
+| Enter the color as #rrggbb. | Podaj kolor w formacie #rrggbb. |
+| Choose one of the two positions. | Wybierz jedną z dwóch pozycji. |
+| A greeting can have 120 characters at most. | Powitanie może mieć najwyżej 120 znaków. |
+| Enter a number from 0 to 60. | Podaj liczbę od 0 do 60. |
+| Enter ID numbers only, separated by commas. | Wpisz same numery ID, po przecinku. |
+| 50 lines at most, each up to 200 characters. | Najwyżej 50 wierszy, każdy do 200 znaków. |
+
+Dopiski w nawiasach w kolumnie EN („pill”, „pill w nagłówku”) to objaśnienia, nie część tekstu. Nazwy pozycji menu PrestaShop w instrukcji Webservice sprawdź w zadaniu 10 na angielskim i polskim panelu wersji 8 i popraw tabelę, jeśli różnią się od wpisanych.
