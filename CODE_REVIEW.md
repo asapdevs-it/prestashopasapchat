@@ -7,7 +7,7 @@ Plik czyta automatycznie `om-code-review`. Bramka walidacji: `.ai/agentic.config
 1. **Bezpieczeństwo**: token połączenia, obsługa powrotu z panelu, uprawnienia administratora.
 2. **Sklep klienta nie może ucierpieć**: wtyczka nie spowalnia strony, nie rzuca błędów, nie psuje koszyka.
 3. **Zgodność z regułami katalogu** (WordPress.org, PrestaShop Addons, Shopify, Shoper): odrzucenie kosztuje tygodnie.
-4. **Zakres**: v1 to połączenie, wstrzyknięcie skryptów, status. Reszta to osobne issue.
+4. **Zakres**: v1 to to, co jest w specu repo. Reszta to osobne issue.
 5. Styl i uproszczenia.
 
 ## Sprawdzenia

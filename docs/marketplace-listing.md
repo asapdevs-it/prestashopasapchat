@@ -1,161 +1,139 @@
-# Wydanie modułu: PrestaShop Addons i kanał zip
+# Teksty: strona pobierania i notatka wydania
 
-Dwa kanały. Zip w GitHub Releases robimy od razu. Addons dopiero po odpowiedzi PrestaShop (patrz `docs/accounts.md`, punkt 1).
+Moduł nie jest w katalogu PrestaShop Addons. Sprzedawca pobiera plik `asapchat.zip` z GitHub Releases. Link do pliku jest w panelu AsapChat (Sklep, potem Wtyczka).
 
-Oznaczenie „do potwierdzenia” = fakt nie został sprawdzony w oficjalnym źródle. Sprawdź go w formularzu sprzedawcy, zanim na nim polegasz.
+Ten plik zawiera gotowe teksty. Nazwa pliku została ze względu na inne repozytoria wtyczek, które mają dokument o tej samej nazwie.
 
-## 1. Kanał zip (bez bramki)
+Zasady tekstów: polski, forma „Ty”, krótkie zdania, bez znaku pauzy, bez emoji. Każdy tekst musi zgadzać się z tym, co moduł naprawdę robi.
 
-1. Tag `v1.0.0` w repo. CI buduje `asapchat.zip` i dołącza do GitHub Release.
-2. Instrukcja dla sprzedawcy (do wklejenia na stronę pomocy AsapChat):
-
-> **Instalacja modułu AsapChat w PrestaShop**
-> 1. Pobierz plik `asapchat.zip`.
-> 2. W panelu sklepu wejdź w Moduły > Menedżer modułów > Załaduj moduł i wskaż plik.
-> 3. Kliknij Konfiguruj, potem „Połącz z AsapChat”.
-> 4. Zaloguj się lub załóż konto, wybierz sklep i potwierdź.
-> 5. Gotowe. Otwórz stronę sklepu i sprawdź, czy widzisz czat.
-
-## 2. Zasady paczki zip
-
-- Plik `asapchat.zip`, w środku jeden folder `asapchat/`, w nim `asapchat.php`.
-- Nazwa: małe litery, cyfry, podkreślenia. Bez numeru wersji, bez słów „prestashop” i „module”.
-- Jeden moduł w archiwum.
-- Bez `__MACOSX`, `.DS_Store`, `.git`, `node_modules`, testów. Zip buduje CI na Linuksie, nie Finder.
-- `index.php` w każdym katalogu, `.htaccess` w katalogu głównym modułu.
-- `module_key` z konta sprzedawcy wpisany w konstruktorze (tylko dla paczki na Addons).
-- `header_csp.txt` w katalogu głównym modułu, treść:
-
-```
-https://asapchat.io
-https://panel.asapchat.io
-```
-
-Uzasadnienie dla recenzenta: skrypty widgetu to sama usługa, a nie zasób pomocniczy. Sposób traktowania zdalnego skryptu przez recenzentów: do potwierdzenia.
-
-## 3. Walidator
-
-1. Wejdź na https://validator.prestashop.com i zaloguj się kontem Marketplace.
-2. Wgraj `asapchat.zip`.
-3. Popraw wszystko z zakładek Errors, Security, Standards, Licenses.
-4. Powtarzaj do zera błędów. Zrzut wyniku dołącz do issue „Wydanie”.
-
-## 4. Karta produktu (gotowe teksty)
+## 1. Strona pobierania (polski)
 
 ### Nazwa
 
-- PL: `AsapChat: czat AI i wyszukiwarka produktów`
-- EN: `AsapChat: AI chat and product search`
+`AsapChat dla PrestaShop: czat AI i wyszukiwarka produktów`
 
 ### Krótki opis
 
-- PL: `Dodaj do sklepu czat AI, który odpowiada klientom całą dobę, i szybką wyszukiwarkę produktów. Połączenie jednym kliknięciem, bez edycji motywu.`
-- EN: `Add an AI chat that answers customers around the clock and a fast product search. Connect in one click, no theme editing.`
+`Dodaj do sklepu czat AI, który odpowiada klientom całą dobę, i szybką wyszukiwarkę produktów. Połączysz sklep jednym kliknięciem, bez edycji motywu. Moduł jest darmowy.`
 
-Limity znaków pól: do potwierdzenia w formularzu sprzedawcy.
+### Przycisk
 
-### Funkcje
+`Pobierz moduł (asapchat.zip)`
 
-PL:
-1. Połączenie sklepu z kontem AsapChat jednym przyciskiem.
-2. Czat AI na każdej stronie sklepu, w kolorach Twojej marki.
-3. Wyszukiwarka AsapSearch z podpowiedziami i tolerancją literówek.
-4. Osobne przełączniki czatu i wyszukiwarki.
-5. Podgląd statusu: czy widget działa na stronie.
-6. Obsługa multistore: osobne połączenie dla każdego sklepu.
-7. Zgodność z PrestaShop 1.7.8, 8 i 9.
+Pod przyciskiem: `Wersja {plugin.latest_version}. PrestaShop 1.7.8, 8 i 9.` oraz link `Co nowego` (adres `changelog_url`).
 
-EN:
-1. Connect your store to AsapChat with one button.
-2. AI chat on every page, in your brand colours.
-3. AsapSearch product search with suggestions and typo tolerance.
-4. Separate switches for chat and search.
-5. Status view: see whether the widget is live.
-6. Multistore support: one connection per shop.
-7. Compatible with PrestaShop 1.7.8, 8 and 9.
+### Co dostajesz
 
-### Korzyści dla sprzedawcy
+1. Połączenie sklepu z kontem AsapChat jednym przyciskiem. Nie masz konta? Założysz je po drodze, za darmo.
+2. Czat AI na stronie sklepu, w kolorach Twojej marki.
+3. Wyszukiwarkę AsapSearch z podpowiedziami i tolerancją literówek.
+4. Dodawanie do koszyka prosto z wyników wyszukiwania.
+5. Ustawienia wyglądu w panelu sklepu: nazwa asystenta, kolor, pozycja, powitania.
+6. Wybór, gdzie czat się pokazuje: opóźnienie i wykluczone strony, kategorie, produkty.
+7. Podgląd statusu: czy czat działa i czy AsapChat ma Twoje produkty i zamówienia.
+8. Informację o nowej wersji modułu.
+9. Obsługę multistore: osobne połączenie dla każdego sklepu.
 
-- PL: `Mniej powtarzalnych pytań do obsługi. AI odpowiada na pytania o produkty, dostawę i status zamówienia, a trudne sprawy przekazuje Tobie.`
-- EN: `Fewer repetitive support questions. The AI answers questions about products, delivery and order status and hands the hard cases over to you.`
+### Instalacja
 
-### Korzyści dla klienta sklepu
+1. Pobierz plik `asapchat.zip`. Nie rozpakowuj go.
+2. W panelu sklepu wejdź w Moduły, potem Menedżer modułów, i kliknij „Załaduj moduł”. Wskaż plik.
+3. Kliknij „Konfiguruj”, potem „Połącz z AsapChat”.
+4. Zaloguj się albo załóż darmowe konto. Wybierz sklep i kliknij „Połącz”. Wrócisz do modułu automatycznie.
+5. Otwórz stronę sklepu i sprawdź, czy widzisz czat.
 
-- PL: `Odpowiedź od razu, także w nocy i w weekend. Produkt znaleziony w kilka sekund, nawet z literówką.`
-- EN: `An answer right away, also at night and at weekends. The right product found in seconds, even with a typo.`
+### Żeby asystent znał Twoje produkty i zamówienia
 
-### Słowa kluczowe (minimum 5 na język)
+AsapChat czyta produkty i zamówienia przez wbudowane API PrestaShop (Webservice). Potrzebujesz klucza:
 
-- PL: `czat, czat AI, chatbot, wyszukiwarka produktów, obsługa klienta, live chat, asystent AI`
-- EN: `chat, AI chat, chatbot, product search, customer service, live chat, AI assistant`
+1. W panelu sklepu wejdź w Zaawansowane, potem API (Webservice).
+2. Włącz usługę sieciową i zapisz.
+3. Kliknij „Dodaj nowy klucz”, potem „Generuj”.
+4. Zaznacz tylko kolumnę GET dla: products, categories, combinations, stock_availables, images, orders, order_states, customers, addresses, carriers.
+5. Zapisz i skopiuj klucz.
+6. W module kliknij „Podłącz w AsapChat” i wklej klucz w panelu AsapChat.
 
-### Usługa zewnętrzna (akapit obowiązkowy w opisie i w dokumentacji)
+Tę samą instrukcję masz w module, w sekcji „Źródło zamówień i produktów”.
 
-- PL: `Moduł łączy sklep z usługą AsapChat. Po połączeniu na stronie sklepu ładowane są skrypty z domeny asapchat.io. Moduł wysyła do AsapChat adres sklepu. Konto AsapChat ma plan bezpłatny (50 rozmów AI miesięcznie).`
-- EN: `The module connects your store to the AsapChat service. Once connected, scripts from asapchat.io are loaded on the storefront. The module sends your store URL to AsapChat. AsapChat has a free plan (50 AI conversations per month).`
+### Aktualizacja
 
-Uwaga: regulamin Addons zabrania linków zewnętrznych, adresów e-mail i adresów stron w opisie i dokumentacji. Jak wolno wskazać stronę rejestracji: do potwierdzenia (pytanie w `docs/accounts.md`).
+Moduł sam pokaże pasek „Dostępna wersja X” na ekranie konfiguracji. Wtedy:
 
-## 5. Grafiki
+1. Kliknij „Pobierz asapchat.zip”.
+2. Wejdź w Moduły, potem Menedżer modułów, kliknij „Załaduj moduł” i wskaż nowy plik.
 
-| Zasób | Wymaganie |
+Połączenie i ustawienia zostają. Nie odinstalowuj starej wersji przed wgraniem nowej.
+
+### Jakie dane wysyła moduł
+
+- Moduł nie wysyła nic do AsapChat, dopóki nie klikniesz „Połącz z AsapChat” albo nie wkleisz klucza instalacyjnego.
+- Po połączeniu moduł wysyła do AsapChat adres Twojego sklepu i ustawienia wyglądu, które zmienisz na ekranie modułu.
+- Na stronie sklepu ładowane są skrypty czatu i wyszukiwarki z serwerów AsapChat.
+- Moduł nie wysyła produktów, zamówień ani danych klientów. Te dane AsapChat pobiera sam przez klucz Webservice, jeśli go podłączysz.
+- Po kliknięciu „Rozłącz” albo odinstalowaniu modułu skrypty znikają ze strony, a połączenie jest odwoływane.
+
+### Najczęstsze problemy
+
+| Problem | Co zrobić |
 |---|---|
-| Ikona | 57x57 px, PNG (także jako `asapchat/logo.png`) |
-| Zrzuty ekranu | minimum 3, najlepiej kwadratowe, osobno dla każdego języka |
+| Nie widzę czatu na stronie | Sprawdź przełącznik „Czat” i sekcję „Gdzie pokazywać”. Wyczyść cache w Zaawansowane, potem Wydajność. |
+| Czat pojawia się z opóźnieniem | Sprawdź pole „Opóźnienie pojawienia się czatu”. |
+| Przełącznik wyszukiwarki jest nieaktywny | AsapChat nie ma jeszcze Twoich produktów. Podłącz klucz Webservice. |
+| Przycisk „Połącz” nie działa albo go nie ma | Użyj klucza instalacyjnego z panelu AsapChat (Sklep, potem Wtyczka). |
+| Ekran pokazuje „Połącz sklep ponownie” | Połączenie zostało odwołane w panelu AsapChat. Kliknij „Połącz ponownie”. Ustawienia modułu zostały. |
+| Mam kilka sklepów (multistore) | Wybierz sklep z listy u góry panelu i połącz każdy osobno. |
 
-Zrzuty i podpisy:
+## 2. Krótki opis po angielsku
 
-1. Ekran „Niepołączony” z przyciskiem. PL: `Połącz sklep jednym kliknięciem.` EN: `Connect your store in one click.`
-2. Ekran „Połączony” z przełącznikami. PL: `Włącz czat i wyszukiwarkę osobno.` EN: `Switch chat and search on separately.`
-3. Strona sklepu z otwartym czatem. PL: `Czat AI odpowiada klientom całą dobę.` EN: `The AI chat answers customers around the clock.`
-4. Strona sklepu z otwartą wyszukiwarką. PL: `Wyszukiwarka z podpowiedziami.` EN: `Search with suggestions.`
+Moduł ma teksty po angielsku i po polsku, więc na stronie wydania w GitHub dajemy też krótki opis angielski:
 
-## 6. Dokumentacja PDF (`asapchat/docs/readme_pl.pdf`, `readme_en.pdf`)
+`AsapChat for PrestaShop: a free module that connects your store to AsapChat and adds an AI chat and the AsapSearch product search to your storefront. Works with PrestaShop 1.7.8, 8 and 9. Install: upload asapchat.zip in Module Manager, click Configure, then Connect with AsapChat.`
 
-Spis treści:
+## 3. Szablon notatki wydania (GitHub Releases)
 
-1. Do czego służy moduł.
-2. Wymagania (wersje PrestaShop, PHP, konto AsapChat).
-3. Instalacja.
-4. Połączenie sklepu przyciskiem.
-5. Połączenie kluczem instalacyjnym.
-6. Przełączniki czatu i wyszukiwarki.
-7. Multistore.
-8. Rozłączenie i odinstalowanie.
-9. Usługa zewnętrzna i przesyłane dane.
-10. Najczęstsze problemy (widget niewidoczny, cache, motyw bez hooka stopki).
+Tytuł wydania: `AsapChat dla PrestaShop X.Y.Z`
 
-## 7. Pozostałe pola karty
+Treść (skopiuj i uzupełnij, puste sekcje usuń):
 
-- Języki: angielski obowiązkowy, polski jako drugi.
-- Kraje: wszystkie.
-- Zgodność: 1.7.8 do 9.x.
-- Changelog: `1.0.0: first release`.
-- Sklep demo: opcjonalnie.
+```markdown
+## Co nowego
 
-## 8. Recenzja
+- Jedno zdanie na zmianę, z punktu widzenia sprzedawcy. Zacznij od czasownika: „Dodaliśmy…”, „Poprawiliśmy…”.
 
-| Etap | Czas |
-|---|---|
-| 1. Automatyczny | do 24 godzin |
-| 2. Techniczny (ekspert) | 5 do 7 dni roboczych |
-| 3. Marketingowy | 7 do 10 dni roboczych |
+## Poprawki
 
-Razem około 12 do 17 dni roboczych.
+- Jedno zdanie na poprawkę.
 
-## 9. Typowe powody odrzucenia
+## Jak zaktualizować
 
-1. Błędy walidatora lub notice w trybie debug.
-2. Brak `index.php` albo strażnika `_PS_VERSION_`.
-3. Brak zgodności z PrestaShop 9.
-4. Zła struktura lub nazwa zipa.
-5. Nieescapowane zmienne Smarty, niebezpieczny SQL.
-6. Linki zewnętrzne lub dane kontaktowe w opisie albo dokumentacji.
-7. Cudze nazwy marek, skopiowane teksty, zrzuty nieprzetłumaczone.
-8. Brak dokumentacji.
+1. Pobierz `asapchat.zip` z tej strony (sekcja Assets).
+2. W panelu sklepu: Moduły, Menedżer modułów, „Załaduj moduł”. Wskaż plik.
 
-## 10. Opłaty
+Połączenie z AsapChat i ustawienia zostają.
 
-- 99 EUR za moduł rocznie (od maja 2024). Czy dotyczy modułu darmowego: do potwierdzenia.
-- Prowizja od sprzedaży: nie dotyczy modułu za 0 EUR.
-- Czy zwykły sprzedawca może wystawić moduł darmowy: do potwierdzenia. To jest bramka całego kanału Addons.
+## Zgodność
+
+PrestaShop 1.7.8, 8.x, 9.x. PHP 7.2 do 8.4.
+
+---
+
+English: one or two sentences summarising the release.
+```
+
+Zasady notatki:
+
+- Piszesz dla sprzedawcy, nie dla programisty. Bez nazw klas, hooków i numerów PR.
+- Gdy wersja wymaga czegoś od sprzedawcy (np. ponownego połączenia), napisz to w pierwszym zdaniu.
+- Pierwsze wydanie: w „Co nowego” wpisz `Pierwsza wersja modułu.`
+
+## 4. Zrzuty ekranu na stronę pobierania
+
+| Nr | Co pokazuje | Podpis |
+|---|---|---|
+| 1 | Ekran „Niepołączony” z przyciskiem | `Połącz sklep jednym kliknięciem.` |
+| 2 | Ekran „Połączony”: status i przełączniki | `Włącz czat i wyszukiwarkę osobno.` |
+| 3 | Sekcja „Wygląd” | `Ustaw kolor, nazwę i powitanie.` |
+| 4 | Strona sklepu z otwartym czatem | `Czat AI odpowiada klientom całą dobę.` |
+| 5 | Strona sklepu z otwartą wyszukiwarką | `Wyszukiwarka z podpowiedziami.` |
+
+Zrzuty robisz na sklepie testowym z przykładowymi danymi. Bez danych prawdziwych klientów.

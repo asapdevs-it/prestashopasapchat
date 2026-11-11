@@ -4,10 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Mockup: PrestaShop, konfiguracja modułu AsapChat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-.mk-ps{--ps-blue:#25b9d7;--ps-blue-d:#1e94ab;--ps-side:#363a41;--ps-side-2:#2c3036;--ps-bg:#eff1f2;--ps-line:#dbe6e9;--ps-ink:#363a41;--ps-muted:#6c868e;--ps-green:#70b580;--ps-red:#f54c3e;--ps-warn-bg:#fff3d7;--ps-warn-line:#fab000;font-family:"Open Sans",Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5;color:var(--ps-ink);background:#fff;border:1px solid var(--ps-line);border-radius:8px;overflow:hidden;text-align:left}
+.mk-ps{--ps-blue:#25b9d7;--ps-side:#363a41;--ps-side-2:#2c3036;--ps-bg:#eff1f2;--ps-line:#dbe6e9;--ps-ink:#363a41;--ps-muted:#6c868e;--ac-bg:#fafafa;--ac-line:#e9eaeb;--ac-ink:#161616;--ac-label:#424448;--ac-desc:#56595f;--ac-accent:#6543f0;--ac-accent-d:#5235d1;--ac-tint:#f6f4fe;--ac-soft:#ece8fd;--ac-field:#d5d7da;--ac-green:#05c732;--ac-grey:#b4b7bd;--ac-red:#c62828;--ac-red-bg:#fdf1f0;--ac-red-line:#f3c5c1;font-family:"Open Sans",Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5;color:var(--ps-ink);background:#fff;border:1px solid var(--ps-line);border-radius:8px;overflow:hidden;text-align:left}
 .mk-ps *{box-sizing:border-box}
 .mk-ps .mk-ps-radio,.mk-ps .mk-ps-check{position:absolute;opacity:0;pointer-events:none}
+
+/* Przełącznik stanów mocka (nie jest częścią modułu) */
 .mk-ps .mk-ps-tabs{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:10px 12px;background:#f8f8f8;border-bottom:1px solid var(--ps-line);font-size:12px;color:var(--ps-muted)}
 .mk-ps .mk-ps-tabs label{padding:5px 12px;border:1px solid #c9d3d6;border-radius:999px;background:#fff;color:var(--ps-ink);cursor:pointer;font-weight:600}
 .mk-ps #mk-ps-s1:checked ~ .mk-ps-tabs label[for="mk-ps-s1"],
@@ -16,6 +21,8 @@
 .mk-ps #mk-ps-s1:focus-visible ~ .mk-ps-tabs label[for="mk-ps-s1"],
 .mk-ps #mk-ps-s2:focus-visible ~ .mk-ps-tabs label[for="mk-ps-s2"],
 .mk-ps #mk-ps-s3:focus-visible ~ .mk-ps-tabs label[for="mk-ps-s3"]{outline:2px solid var(--ps-blue);outline-offset:2px}
+
+/* Otoczenie: back office PrestaShop */
 .mk-ps .mk-ps-top{display:flex;align-items:center;gap:14px;height:46px;padding:0 16px;background:#fff;border-bottom:1px solid var(--ps-line)}
 .mk-ps .mk-ps-logo{font-weight:700;font-size:15px;letter-spacing:-.01em;color:var(--ps-ink)}
 .mk-ps .mk-ps-logo span{color:var(--ps-blue)}
@@ -29,59 +36,124 @@
 .mk-ps .mk-ps-side .mk-ps-on{background:var(--ps-side-2);color:#fff;border-left:3px solid var(--ps-blue);padding-left:15px}
 .mk-ps .mk-ps-main{flex:1;min-width:0;background:var(--ps-bg);padding:18px}
 .mk-ps .mk-ps-crumb{font-size:12px;color:var(--ps-muted);margin-bottom:4px}
-.mk-ps .mk-ps-h1{font-size:22px;font-weight:400;margin:0 0 16px}
+.mk-ps .mk-ps-h1{font-size:22px;font-weight:400;margin:0 0 16px;color:var(--ps-ink)}
+
+/* Ekran modułu w stylu AsapChat */
+.mk-ps .mk-ps-app{max-width:960px;background:var(--ac-bg);border:1px solid var(--ac-line);border-radius:16px;overflow:hidden;color:var(--ac-ink);font-size:15px}
+.mk-ps .mk-ps-hd{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:16px 24px;background:#161616;border-bottom:4px solid var(--ac-accent)}
+.mk-ps .mk-ps-hd svg{display:block;height:30px;width:auto}
+.mk-ps .mk-ps-hd-link{display:none;color:#fff;font-size:14px;font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.mk-ps #mk-ps-s2:checked ~ .mk-ps-body .mk-ps-hd-link{display:inline}
+.mk-ps .mk-ps-in{padding:24px}
 .mk-ps .mk-ps-state{display:none}
 .mk-ps #mk-ps-s1:checked ~ .mk-ps-body .mk-ps-state-1,
 .mk-ps #mk-ps-s2:checked ~ .mk-ps-body .mk-ps-state-2,
 .mk-ps #mk-ps-s3:checked ~ .mk-ps-body .mk-ps-state-3{display:block}
-.mk-ps .mk-ps-card{background:#fff;border:1px solid var(--ps-line);border-radius:5px;box-shadow:0 0 4px rgba(0,0,0,.06);margin-bottom:16px}
-.mk-ps .mk-ps-card-h{padding:11px 16px;border-bottom:1px solid var(--ps-line);font-weight:600;font-size:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.mk-ps .mk-ps-card-b{padding:16px}
-.mk-ps .mk-ps-card-f{padding:12px 16px;border-top:1px solid var(--ps-line);display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.mk-ps .mk-ps-title{font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1.2;margin:0}
+.mk-ps .mk-ps-lead{margin:8px 0 0;color:var(--ac-desc);max-width:60ch}
+.mk-ps .mk-ps-headrow{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+.mk-ps .mk-ps-headrow-t{min-width:0}
+.mk-ps .mk-ps-meta{display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap;margin-top:8px;color:var(--ac-desc);font-size:14px}
+.mk-ps .mk-ps-card{background:#fff;border:1px solid var(--ac-line);border-radius:16px;box-shadow:0 6px 20px rgba(15,26,23,.05);padding:24px;margin-bottom:16px}
+.mk-ps .mk-ps-card-h{font-size:18px;font-weight:800;margin:0 0 4px}
+.mk-ps .mk-ps-card-d{font-size:13px;color:var(--ac-desc);margin:0 0 16px;max-width:70ch}
 .mk-ps .mk-ps-p{margin:0 0 12px;max-width:62ch}
-.mk-ps .mk-ps-small{font-size:12px;color:var(--ps-muted)}
-.mk-ps .mk-ps-btn{display:inline-flex;align-items:center;justify-content:center;height:36px;padding:0 16px;border:1px solid var(--ps-blue);border-radius:4px;background:var(--ps-blue);color:#fff;font-weight:600;font-size:14px;cursor:pointer;white-space:nowrap;font-family:inherit}
-.mk-ps .mk-ps-btn:hover{background:var(--ps-blue-d);border-color:var(--ps-blue-d)}
-.mk-ps .mk-ps-btn-lg{height:42px;padding:0 22px;font-size:15px}
-.mk-ps .mk-ps-btn-o{background:#fff;color:var(--ps-ink);border-color:#bbcdd2}
-.mk-ps .mk-ps-btn-o:hover{background:var(--ps-bg);border-color:#bbcdd2}
-.mk-ps .mk-ps-btn-d{background:#fff;color:var(--ps-red);border-color:var(--ps-red)}
-.mk-ps .mk-ps-btn-d:hover{background:#fdeceb;border-color:var(--ps-red)}
-.mk-ps .mk-ps-link{color:var(--ps-blue-d);text-decoration:underline;cursor:pointer;font-weight:600}
-.mk-ps .mk-ps-keybox{display:none;margin-top:12px;padding:14px;border:1px dashed #bbcdd2;border-radius:5px;background:#fafbfc}
-.mk-ps .mk-ps-check:checked ~ .mk-ps-keybox{display:block}
-.mk-ps .mk-ps-check:focus-visible ~ .mk-ps-link{outline:2px solid var(--ps-blue);outline-offset:2px}
-.mk-ps .mk-ps-field{display:block;font-weight:600;font-size:13px;margin-bottom:6px}
-.mk-ps .mk-ps-row{display:flex;gap:10px;flex-wrap:wrap}
-.mk-ps .mk-ps-input{flex:1;min-width:180px;height:36px;border:1px solid #bbcdd2;border-radius:4px;padding:0 10px;font-size:14px;font-family:Menlo,Consolas,monospace;color:var(--ps-ink);background:#fff}
-.mk-ps .mk-ps-badge{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:700;background:#e3f3e6;color:#2f7a42}
-.mk-ps .mk-ps-badge-r{background:#fdeceb;color:#b3261a}
-.mk-ps .mk-ps-kv{display:grid;grid-template-columns:170px 1fr;gap:8px 16px;margin:0}
-.mk-ps .mk-ps-kv dt{color:var(--ps-muted)}
-.mk-ps .mk-ps-kv dd{margin:0;font-weight:600;min-width:0;overflow-wrap:anywhere}
-.mk-ps .mk-ps-opt{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-top:1px solid var(--ps-line)}
-.mk-ps .mk-ps-opt:first-child{border-top:0;padding-top:0}
-.mk-ps .mk-ps-opt-t{flex:1;min-width:0}
-.mk-ps .mk-ps-opt-t b{display:block}
-.mk-ps .mk-ps-sw{position:relative;flex:none;width:44px;height:24px;cursor:pointer}
-.mk-ps .mk-ps-sw input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer}
-.mk-ps .mk-ps-sw i{position:absolute;inset:0;border-radius:999px;background:#c9d3d6;transition:background .15s}
-.mk-ps .mk-ps-sw i::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .15s}
-.mk-ps .mk-ps-sw input:checked + i{background:var(--ps-green)}
+.mk-ps .mk-ps-small{display:block;font-size:13px;color:var(--ac-desc)}
+.mk-ps .mk-ps-link{color:var(--ac-accent);font-weight:600;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+
+/* Przyciski */
+.mk-ps .mk-ps-btn{display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 18px;border:1px solid var(--ac-field);border-radius:10px;background:#fff;color:var(--ac-ink);font:inherit;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;text-decoration:none}
+.mk-ps .mk-ps-btn:hover{border-color:var(--ac-ink)}
+.mk-ps .mk-ps-btn:focus-visible,.mk-ps .mk-ps-link:focus-visible{outline:0;box-shadow:0 0 0 3px rgba(101,67,240,.2);border-color:var(--ac-accent)}
+.mk-ps .mk-ps-btn-main{height:48px;padding:0 26px;border-color:var(--ac-accent);background:var(--ac-accent);color:#fff;font-size:15px}
+.mk-ps .mk-ps-btn-main:hover{background:var(--ac-accent-d);border-color:var(--ac-accent-d)}
+.mk-ps .mk-ps-btn-danger{color:var(--ac-red)}
+.mk-ps .mk-ps-btn-danger:hover{border-color:var(--ac-red)}
+
+/* Statusy (pill) */
+.mk-ps .mk-ps-pill{display:inline-flex;align-items:center;gap:8px;padding:4px 12px;border:1px solid var(--ac-line);border-radius:999px;background:#fff;font-size:13px;font-weight:600;color:var(--ac-label);white-space:nowrap}
+.mk-ps .mk-ps-pill::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--ac-grey)}
+.mk-ps .mk-ps-pill-on::before{background:var(--ac-green)}
+.mk-ps .mk-ps-pill-plan{background:var(--ac-soft);border-color:var(--ac-soft);color:var(--ac-accent-d)}
+.mk-ps .mk-ps-pill-plan::before{display:none}
+.mk-ps .mk-ps-pill-err{background:var(--ac-red-bg);border-color:var(--ac-red-line);color:var(--ac-red)}
+.mk-ps .mk-ps-pill-err::before{background:var(--ac-red)}
+
+/* Wiersze: status, przełączniki */
+.mk-ps .mk-ps-row{display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-top:1px solid var(--ac-line)}
+.mk-ps .mk-ps-row:first-of-type{border-top:0;padding-top:0}
+.mk-ps .mk-ps-row:last-child{padding-bottom:0}
+.mk-ps .mk-ps-row-t{flex:1;min-width:0}
+.mk-ps .mk-ps-row-t b{display:block;font-weight:700}
+.mk-ps .mk-ps-row-off b,.mk-ps .mk-ps-row-off .mk-ps-small{color:#8b8f96}
+.mk-ps .mk-ps-sw{position:relative;flex:none;width:46px;height:26px;margin-top:2px;cursor:pointer}
+.mk-ps .mk-ps-sw input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.mk-ps .mk-ps-sw i{position:absolute;inset:0;border-radius:999px;background:var(--ac-field);transition:background .15s}
+.mk-ps .mk-ps-sw i::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2);transition:transform .15s}
+.mk-ps .mk-ps-sw input:checked + i{background:var(--ac-accent)}
 .mk-ps .mk-ps-sw input:checked + i::after{transform:translateX(20px)}
-.mk-ps .mk-ps-sw input:focus-visible + i{outline:2px solid var(--ps-blue);outline-offset:2px}
-.mk-ps .mk-ps-alert{padding:12px 14px;border-radius:5px;border:1px solid var(--ps-warn-line);background:var(--ps-warn-bg);margin-bottom:14px;max-width:70ch}
-.mk-ps .mk-ps-alert-ok{border-color:#9bd0a6;background:#eaf6ec}
-.mk-ps .mk-ps-alert-err{border-color:#f3a8a1;background:#fdeceb}
-.mk-ps .mk-ps-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ps-green);margin-right:6px}
-@media (max-width:640px){
+.mk-ps .mk-ps-sw input:focus-visible + i{box-shadow:0 0 0 3px rgba(101,67,240,.2)}
+.mk-ps .mk-ps-sw input:disabled{cursor:not-allowed}
+.mk-ps .mk-ps-sw input:disabled + i{background:#eceef0}
+
+/* Pola formularza */
+.mk-ps .mk-ps-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 20px}
+.mk-ps .mk-ps-span{grid-column:1 / -1}
+.mk-ps .mk-ps-label{display:block;font-size:14px;font-weight:600;color:var(--ac-label);margin-bottom:6px}
+.mk-ps .mk-ps-input{display:block;width:100%;height:44px;padding:0 12px;border:1px solid var(--ac-field);border-radius:10px;background:#fff;color:var(--ac-ink);font:inherit;font-size:15px}
+.mk-ps textarea.mk-ps-input{height:auto;min-height:88px;padding:10px 12px;resize:vertical}
+.mk-ps .mk-ps-input:focus{outline:0;border-color:var(--ac-accent);box-shadow:0 0 0 3px rgba(101,67,240,.2)}
+.mk-ps .mk-ps-mono{font-family:Menlo,Consolas,monospace;font-size:14px}
+.mk-ps .mk-ps-hint{display:block;font-size:13px;color:var(--ac-desc);margin-top:6px}
+.mk-ps .mk-ps-color{display:flex;gap:10px}
+.mk-ps .mk-ps-color input[type=color]{flex:none;width:44px;height:44px;padding:3px;border:1px solid var(--ac-field);border-radius:10px;background:#fff;cursor:pointer}
+.mk-ps .mk-ps-seg{display:flex;gap:10px}
+.mk-ps .mk-ps-seg label{position:relative;flex:1;display:flex;align-items:center;justify-content:center;height:44px;padding:0 10px;border:1px solid var(--ac-field);border-radius:10px;background:#fff;font-size:14px;font-weight:600;color:var(--ac-label);cursor:pointer;text-align:center}
+.mk-ps .mk-ps-seg input{position:absolute;opacity:0}
+.mk-ps .mk-ps-seg input:checked + span{color:var(--ac-accent-d)}
+.mk-ps .mk-ps-seg label:has(input:checked){border-color:var(--ac-accent);background:var(--ac-tint)}
+.mk-ps .mk-ps-seg label:has(input:focus-visible){box-shadow:0 0 0 3px rgba(101,67,240,.2)}
+.mk-ps .mk-ps-num{display:flex;align-items:center;gap:10px}
+.mk-ps .mk-ps-num .mk-ps-input{width:96px}
+.mk-ps .mk-ps-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.mk-ps .mk-ps-chip{display:inline-flex;align-items:center;gap:8px;padding:5px 8px 5px 12px;border-radius:999px;background:var(--ac-soft);color:var(--ac-accent-d);font-size:13px;font-weight:600}
+.mk-ps .mk-ps-chip span{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:#fff;font-size:12px;line-height:1;cursor:pointer}
+
+/* Rozwijane bloki */
+.mk-ps .mk-ps-fold{margin-top:16px;border:1px solid var(--ac-line);border-radius:12px;background:var(--ac-bg)}
+.mk-ps .mk-ps-fold summary{padding:12px 16px;font-size:14px;font-weight:700;color:var(--ac-accent);cursor:pointer}
+.mk-ps .mk-ps-fold summary:focus-visible{outline:0;box-shadow:0 0 0 3px rgba(101,67,240,.2);border-radius:12px}
+.mk-ps .mk-ps-fold-b{padding:0 16px 16px;font-size:14px}
+.mk-ps .mk-ps-fold-b ol{margin:0;padding-left:20px}
+.mk-ps .mk-ps-fold-b li{margin-bottom:6px}
+.mk-ps .mk-ps-fold-b code{padding:1px 6px;border-radius:6px;background:var(--ac-soft);font-family:Menlo,Consolas,monospace;font-size:12.5px;overflow-wrap:anywhere}
+.mk-ps .mk-ps-keyrow{display:flex;gap:10px;flex-wrap:wrap}
+.mk-ps .mk-ps-keyrow .mk-ps-input{flex:1;min-width:200px;width:auto}
+
+/* Komunikaty i paski */
+.mk-ps .mk-ps-note{padding:12px 16px;border:1px solid var(--ac-soft);border-radius:12px;background:var(--ac-tint);font-size:14px;margin-bottom:16px}
+.mk-ps .mk-ps-note-err{border-color:var(--ac-red-line);background:var(--ac-red-bg)}
+.mk-ps .mk-ps-update{display:flex;align-items:center;justify-content:space-between;gap:12px 20px;flex-wrap:wrap;padding:16px 20px;border:1px solid var(--ac-soft);border-radius:16px;background:var(--ac-tint);margin-bottom:16px}
+.mk-ps .mk-ps-update-t{flex:1;min-width:220px}
+.mk-ps .mk-ps-update-t b{display:block;font-size:15px}
+.mk-ps .mk-ps-update-a{display:flex;align-items:center;gap:12px 16px;flex-wrap:wrap}
+.mk-ps .mk-ps-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:20px}
+.mk-ps .mk-ps-save{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:8px}
+.mk-ps .mk-ps-center{max-width:560px;margin:8px auto 0}
+
+@media (max-width:760px){
 .mk-ps .mk-ps-side,.mk-ps .mk-ps-search,.mk-ps .mk-ps-ver{display:none}
-.mk-ps .mk-ps-main{padding:12px}
-.mk-ps .mk-ps-kv{grid-template-columns:1fr;gap:2px 0}
-.mk-ps .mk-ps-kv dd{margin-bottom:8px}
-.mk-ps .mk-ps-card-f{justify-content:stretch}
-.mk-ps .mk-ps-card-f .mk-ps-btn{flex:1}
-.mk-ps .mk-ps-btn-lg{width:100%}
+.mk-ps .mk-ps-main{padding:10px}
+.mk-ps .mk-ps-h1{font-size:18px;margin-bottom:10px}
+.mk-ps .mk-ps-hd{padding:14px 16px}
+.mk-ps .mk-ps-hd svg{height:26px}
+.mk-ps .mk-ps-in{padding:16px 12px}
+.mk-ps .mk-ps-card{padding:18px 16px}
+.mk-ps .mk-ps-title{font-size:24px}
+.mk-ps .mk-ps-grid{grid-template-columns:1fr}
+.mk-ps .mk-ps-pill{white-space:normal}
+.mk-ps .mk-ps-btn-main,.mk-ps .mk-ps-headrow .mk-ps-btn,.mk-ps .mk-ps-keyrow .mk-ps-btn,.mk-ps .mk-ps-update-a .mk-ps-btn{width:100%}
+.mk-ps .mk-ps-update-a{width:100%}
 }
 @media (prefers-reduced-motion:reduce){.mk-ps .mk-ps-sw i,.mk-ps .mk-ps-sw i::after{transition:none}}
 </style>
@@ -95,7 +167,7 @@
     <span>Stan ekranu:</span>
     <label for="mk-ps-s1">Niepołączony</label>
     <label for="mk-ps-s2">Połączony</label>
-    <label for="mk-ps-s3">Błąd</label>
+    <label for="mk-ps-s3">Błąd, połącz ponownie</label>
   </div>
   <div class="mk-ps-top">
     <div class="mk-ps-logo">Presta<span>Shop</span></div>
@@ -122,77 +194,237 @@
       <div class="mk-ps-crumb">Moduły / Menedżer modułów / asapchat</div>
       <h2 class="mk-ps-h1">Konfiguruj: AsapChat</h2>
 
-      <div class="mk-ps-state mk-ps-state-1">
-        <div class="mk-ps-card">
-          <div class="mk-ps-card-h">Połącz sklep z AsapChat</div>
-          <div class="mk-ps-card-b">
-            <p class="mk-ps-p">Ten moduł doda do Twojego sklepu czat AI i wyszukiwarkę produktów AsapSearch. Wystarczy połączyć sklep z kontem AsapChat.</p>
-            <p class="mk-ps-p"><span class="mk-ps-btn mk-ps-btn-lg" role="button" tabindex="0">Połącz z AsapChat</span></p>
-            <p class="mk-ps-p mk-ps-small">Po kliknięciu przejdziesz do panel.asapchat.io. Przekażemy tam adres Twojego sklepu: https://mojsklep.pl. Nie masz konta? Założysz je tam za darmo.</p>
-            <input class="mk-ps-check" type="checkbox" id="mk-ps-key">
-            <label class="mk-ps-link" for="mk-ps-key">Mam klucz instalacyjny</label>
-            <div class="mk-ps-keybox">
-              <label class="mk-ps-field" for="mk-ps-keyinput">Klucz instalacyjny</label>
-              <div class="mk-ps-row">
-                <input class="mk-ps-input" id="mk-ps-keyinput" type="text" placeholder="ack_...">
-                <span class="mk-ps-btn mk-ps-btn-o" role="button" tabindex="0">Zapisz klucz</span>
+      <div class="mk-ps-app">
+        <div class="mk-ps-hd">
+          <svg role="img" aria-label="AsapChat" xmlns="http://www.w3.org/2000/svg" width="249" height="52" viewBox="0 0 249 52" fill="none"><path d="M59.12 37H52.2L63.44 10H68.92L80.2 37H73.28L71.56 32.76H60.84L59.12 37ZM66.24 19.44L63.2 26.88H69.2L66.24 19.44ZM95.8116 23.6L90.3316 24.48C90.1182 23.6267 89.3849 23.2 88.1316 23.2C87.0916 23.2 86.5716 23.4667 86.5716 24C86.5716 24.3733 86.9716 24.68 87.7716 24.92L90.5316 25.76C92.5316 26.3467 93.9582 27.08 94.8116 27.96C95.6649 28.84 96.0916 30 96.0916 31.44C96.0916 33.36 95.4116 34.84 94.0516 35.88C92.6916 36.8933 90.7982 37.4 88.3716 37.4C83.5716 37.4 80.9182 35.5733 80.4116 31.92L85.8916 31.16C86.1849 32.12 87.0516 32.6 88.4916 32.6C89.7182 32.6 90.3316 32.32 90.3316 31.76C90.3316 31.3333 89.7849 30.9733 88.6916 30.68L85.8516 29.92C84.0382 29.4933 82.7182 28.8533 81.8916 28C81.0916 27.1467 80.6916 25.9867 80.6916 24.52C80.6916 22.52 81.3582 21.04 82.6916 20.08C84.0249 19.0933 85.8782 18.6 88.2516 18.6C90.4916 18.6 92.2516 19.04 93.5316 19.92C94.8382 20.7733 95.5982 22 95.8116 23.6ZM105.608 18.6C107.208 18.6 108.701 19.0667 110.088 20V19H116.128V37H110.088V36C108.701 36.9333 107.208 37.4 105.608 37.4C103.261 37.4 101.288 36.5067 99.6875 34.72C98.1142 32.9067 97.3275 30.6667 97.3275 28C97.3275 25.36 98.1142 23.1333 99.6875 21.32C101.288 19.5067 103.261 18.6 105.608 18.6ZM103.648 27.96C103.648 28.9467 103.954 29.7733 104.568 30.44C105.208 31.1067 105.968 31.44 106.848 31.44C107.728 31.44 108.474 31.1067 109.088 30.44C109.701 29.7733 110.008 28.9467 110.008 27.96C110.008 27 109.701 26.1867 109.088 25.52C108.474 24.8533 107.728 24.52 106.848 24.52C105.968 24.52 105.208 24.8533 104.568 25.52C103.954 26.1867 103.648 27 103.648 27.96ZM124.394 46H118.354V19H124.394V20C125.781 19.0667 127.274 18.6 128.874 18.6C131.248 18.6 133.221 19.5067 134.794 21.32C136.368 23.1333 137.154 25.36 137.154 28C137.154 30.6933 136.354 32.9333 134.754 34.72C133.208 36.5067 131.248 37.4 128.874 37.4C127.194 37.4 125.701 36.92 124.394 35.96V46ZM124.474 28.04C124.474 29 124.781 29.8133 125.394 30.48C126.034 31.12 126.794 31.44 127.674 31.44C128.554 31.44 129.301 31.12 129.914 30.48C130.528 29.8133 130.834 29 130.834 28.04C130.834 27.0533 130.528 26.2267 129.914 25.56C129.301 24.8667 128.554 24.52 127.674 24.52C126.794 24.52 126.034 24.8667 125.394 25.56C124.781 26.2267 124.474 27.0533 124.474 28.04ZM157.461 25.04L151.341 26.84C151.128 26.1467 150.728 25.5867 150.141 25.16C149.555 24.7333 148.888 24.52 148.141 24.52C147.208 24.52 146.408 24.8533 145.741 25.52C145.075 26.1867 144.741 26.9867 144.741 27.92C144.741 28.9333 145.061 29.7733 145.701 30.44C146.368 31.1067 147.181 31.44 148.141 31.44C148.888 31.44 149.555 31.24 150.141 30.84C150.728 30.4133 151.128 29.8533 151.341 29.16L157.461 30.92C156.795 32.8667 155.608 34.44 153.901 35.64C152.221 36.8133 150.301 37.4 148.141 37.4C145.368 37.4 143.048 36.5067 141.181 34.72C139.341 32.9333 138.421 30.6933 138.421 28C138.421 25.3067 139.341 23.0667 141.181 21.28C143.048 19.4933 145.368 18.6 148.141 18.6C150.301 18.6 152.221 19.1867 153.901 20.36C155.608 21.5333 156.795 23.0933 157.461 25.04ZM158.862 37V8H164.902V20.48C166.102 19.2267 167.609 18.6 169.422 18.6C171.289 18.6 172.876 19.2533 174.182 20.56C175.489 21.84 176.142 23.4533 176.142 25.4V37H170.062V26.88C170.062 26.1067 169.822 25.4533 169.342 24.92C168.862 24.3867 168.249 24.12 167.502 24.12C166.756 24.12 166.129 24.3867 165.622 24.92C165.142 25.4533 164.902 26.1067 164.902 26.88V37H158.862ZM186.193 18.6C187.793 18.6 189.287 19.0667 190.673 20V19H196.713V37H190.673V36C189.287 36.9333 187.793 37.4 186.193 37.4C183.847 37.4 181.873 36.5067 180.273 34.72C178.7 32.9067 177.913 30.6667 177.913 28C177.913 25.36 178.7 23.1333 180.273 21.32C181.873 19.5067 183.847 18.6 186.193 18.6ZM184.233 27.96C184.233 28.9467 184.54 29.7733 185.153 30.44C185.793 31.1067 186.553 31.44 187.433 31.44C188.313 31.44 189.06 31.1067 189.673 30.44C190.287 29.7733 190.593 28.9467 190.593 27.96C190.593 27 190.287 26.1867 189.673 25.52C189.06 24.8533 188.313 24.52 187.433 24.52C186.553 24.52 185.793 24.8533 185.153 25.52C184.54 26.1867 184.233 27 184.233 27.96ZM198.06 24.24V19H200.42V15.56H206.5V19H210.22V24.24H206.5V29.76C206.5 30.2133 206.66 30.6 206.98 30.92C207.3 31.2133 207.714 31.36 208.22 31.36H210.26V37H206.9C205.087 37 203.554 36.4533 202.3 35.36C201.047 34.24 200.42 32.8667 200.42 31.24V24.24H198.06ZM211.746 34.04C211.746 33.1067 212.066 32.32 212.706 31.68C213.346 31.0133 214.133 30.68 215.066 30.68C216.026 30.68 216.813 31 217.426 31.64C218.066 32.28 218.386 33.08 218.386 34.04C218.386 35 218.066 35.8 217.426 36.44C216.813 37.08 216.026 37.4 215.066 37.4C214.133 37.4 213.346 37.08 212.706 36.44C212.066 35.8 211.746 35 211.746 34.04ZM226.387 37H220.347V19H226.387V37ZM219.707 13.16C219.707 12.0933 220.053 11.2133 220.747 10.52C221.44 9.82667 222.307 9.48 223.347 9.48C224.413 9.48 225.293 9.82667 225.987 10.52C226.68 11.2133 227.027 12.0933 227.027 13.16C227.027 14.2 226.68 15.0667 225.987 15.76C225.293 16.4533 224.413 16.8 223.347 16.8C222.333 16.8 221.467 16.4533 220.747 15.76C220.053 15.0667 219.707 14.2 219.707 13.16ZM230.908 34.68C229.068 32.8667 228.148 30.64 228.148 28C228.148 25.36 229.068 23.1333 230.908 21.32C232.801 19.5067 235.121 18.6 237.868 18.6C240.614 18.6 242.921 19.5067 244.788 21.32C246.654 23.1067 247.588 25.3333 247.588 28C247.588 30.6667 246.654 32.8933 244.788 34.68C242.921 36.4933 240.614 37.4 237.868 37.4C235.121 37.4 232.801 36.4933 230.908 34.68ZM234.468 28C234.468 28.9333 234.801 29.7467 235.468 30.44C236.134 31.1067 236.934 31.44 237.868 31.44C238.828 31.44 239.628 31.1067 240.268 30.44C240.934 29.7733 241.268 28.96 241.268 28C241.268 27.04 240.934 26.2267 240.268 25.56C239.628 24.8667 238.828 24.52 237.868 24.52C236.934 24.52 236.134 24.8667 235.468 25.56C234.801 26.2267 234.468 27.04 234.468 28Z" fill="white"/><path d="M4.87352 51.9875L6.50379 33.8734L20.4517 41.6625L4.87352 51.9875Z" fill="white"/><path fill-rule="evenodd" clip-rule="evenodd" d="M44 21.7369C44 33.7419 34.268 43.4739 22.2631 43.4739C10.2581 43.4739 0.526131 33.7419 0.526131 21.7369C0.526131 9.73196 10.2581 0 22.2631 0C34.268 0 44 9.73196 44 21.7369ZM25.7898 36.8657C24.6022 37.1593 23.3603 37.3151 22.0819 37.3151C13.5784 37.3151 6.68493 30.4216 6.68493 21.9181C6.68493 13.4145 13.5784 6.52107 22.0819 6.52107C30.5854 6.52107 37.4789 13.4145 37.4789 21.9181C37.4789 27.2722 34.7461 31.988 30.5992 34.7468L31.1816 39.3932L25.7898 36.8657Z" fill="white"/><path fill-rule="evenodd" clip-rule="evenodd" d="M13.7494 21.7361C15.2501 21.7361 16.4666 20.5196 16.4666 19.019C16.4666 18.013 15.9198 17.1347 15.1073 16.665C17.2667 16.7128 19.0025 18.4782 19.0025 20.6491C19.0025 22.85 17.2183 24.6342 15.0174 24.6342C12.8165 24.6342 11.0323 22.85 11.0323 20.6491C11.0323 20.3416 11.0672 20.0422 11.1331 19.7547C11.4539 20.8979 12.5038 21.7361 13.7494 21.7361Z" fill="white"/><path fill-rule="evenodd" clip-rule="evenodd" d="M28.2407 21.7361C29.7413 21.7361 30.9578 20.5196 30.9578 19.019C30.9578 18.013 30.4111 17.1347 29.5986 16.665C31.758 16.7128 33.4938 18.4782 33.4938 20.6491C33.4938 22.85 31.7096 24.6342 29.5087 24.6342C27.3078 24.6342 25.5236 22.85 25.5236 20.6491C25.5236 20.3416 25.5584 20.0422 25.6244 19.7547C25.9452 20.8979 26.995 21.7361 28.2407 21.7361Z" fill="white"/></svg>
+          <a class="mk-ps-hd-link" href="#">Otwórz panel AsapChat</a>
+        </div>
+        <div class="mk-ps-in">
+
+          <!-- STAN 1: niepołączony -->
+          <div class="mk-ps-state mk-ps-state-1">
+            <div class="mk-ps-card mk-ps-center">
+              <h3 class="mk-ps-title">Połącz sklep z AsapChat</h3>
+              <p class="mk-ps-lead">Moduł doda do Twojego sklepu czat AI i wyszukiwarkę produktów AsapSearch. Nie musisz niczego wklejać do motywu.</p>
+              <div class="mk-ps-actions">
+                <span class="mk-ps-btn mk-ps-btn-main" role="button" tabindex="0">Połącz z AsapChat</span>
               </div>
-              <p class="mk-ps-small" style="margin:8px 0 0">Klucz znajdziesz w panelu AsapChat: Sklep, karta „Wtyczka”, przycisk „Utwórz klucz”.</p>
+              <span class="mk-ps-hint">Nie masz konta? Założysz je w następnym kroku, za darmo.</span>
+              <span class="mk-ps-hint">Po kliknięciu przejdziesz do panel.asapchat.io. Przekażemy tam adres Twojego sklepu: https://mojsklep.pl.</span>
+              <details class="mk-ps-fold">
+                <summary>Mam klucz instalacyjny</summary>
+                <div class="mk-ps-fold-b">
+                  <label class="mk-ps-label" for="mk-ps-key1">Klucz instalacyjny</label>
+                  <div class="mk-ps-keyrow">
+                    <input class="mk-ps-input mk-ps-mono" id="mk-ps-key1" type="text" placeholder="ack_..." autocomplete="off">
+                    <span class="mk-ps-btn" role="button" tabindex="0">Połącz kluczem</span>
+                  </div>
+                  <span class="mk-ps-hint">Klucz znajdziesz w panelu AsapChat: Sklep, potem Wtyczka, potem „Klucz instalacyjny”.</span>
+                </div>
+              </details>
             </div>
           </div>
-        </div>
-        <div class="mk-ps-card">
-          <div class="mk-ps-card-h">Co się stanie po połączeniu</div>
-          <div class="mk-ps-card-b">
-            <p class="mk-ps-p" style="margin:0">1. Na stronie sklepu pojawi się przycisk czatu.<br>2. Pole wyszukiwania zacznie otwierać AsapSearch, gdy produkty będą zaimportowane.<br>3. Każdą z tych funkcji wyłączysz tutaj jednym przełącznikiem.</p>
-          </div>
-        </div>
-      </div>
 
-      <div class="mk-ps-state mk-ps-state-2">
-        <div class="mk-ps-alert mk-ps-alert-ok">Połączono sklep z AsapChat.</div>
-        <div class="mk-ps-card">
-          <div class="mk-ps-card-h">Połączenie <span class="mk-ps-badge">Połączono</span></div>
-          <div class="mk-ps-card-b">
-            <dl class="mk-ps-kv">
-              <dt>Sklep w AsapChat</dt><dd>Mój Sklep (mojsklep.pl)</dd>
-              <dt>Plan</dt><dd>Free, 50 rozmów AI miesięcznie</dd>
-              <dt>Widget na stronie</dt><dd><span class="mk-ps-dot"></span>Widziany dzisiaj o 10:42</dd>
-              <dt>Ustawienia pobrane</dt><dd>dzisiaj o 10:40</dd>
-            </dl>
-          </div>
-          <div class="mk-ps-card-f">
-            <span class="mk-ps-btn mk-ps-btn-o" role="button" tabindex="0">Odśwież</span>
-            <span class="mk-ps-btn mk-ps-btn-o" role="button" tabindex="0">Otwórz panel AsapChat</span>
-            <span class="mk-ps-btn mk-ps-btn-d" role="button" tabindex="0">Rozłącz</span>
-          </div>
-        </div>
-        <div class="mk-ps-card">
-          <div class="mk-ps-card-h">Co pokazujemy na stronie sklepu</div>
-          <div class="mk-ps-card-b">
-            <div class="mk-ps-opt">
-              <label class="mk-ps-sw"><input type="checkbox" id="mk-ps-chat" checked aria-label="Czat na stronie sklepu"><i></i></label>
-              <div class="mk-ps-opt-t"><b>Czat na stronie sklepu</b><span class="mk-ps-small">Przycisk czatu w rogu każdej strony. Wygląd i powitanie zmienisz w panelu AsapChat.</span></div>
-            </div>
-            <div class="mk-ps-opt">
-              <label class="mk-ps-sw"><input type="checkbox" id="mk-ps-search" checked aria-label="Wyszukiwarka AsapSearch"><i></i></label>
-              <div class="mk-ps-opt-t"><b>Wyszukiwarka AsapSearch</b><span class="mk-ps-small">Kliknięcie w pole wyszukiwania sklepu otwiera AsapSearch. Zaimportowano 1 248 produktów.</span></div>
-            </div>
-          </div>
-          <div class="mk-ps-card-f">
-            <span class="mk-ps-btn" role="button" tabindex="0">Zapisz</span>
-          </div>
-        </div>
-      </div>
+          <!-- STAN 2: połączony -->
+          <div class="mk-ps-state mk-ps-state-2">
 
-      <div class="mk-ps-state mk-ps-state-3">
-        <div class="mk-ps-alert mk-ps-alert-err"><b>Połączenie z AsapChat wygasło.</b> Zostało odwołane w panelu AsapChat albo sklep został tam usunięty. Czat i wyszukiwarka są teraz wyłączone na stronie sklepu.</div>
-        <div class="mk-ps-card">
-          <div class="mk-ps-card-h">Połączenie <span class="mk-ps-badge mk-ps-badge-r">Rozłączono</span></div>
-          <div class="mk-ps-card-b">
-            <p class="mk-ps-p">Połącz sklep ponownie, żeby przywrócić czat i wyszukiwarkę. Twoje przełączniki zostaną zachowane.</p>
-            <p class="mk-ps-p" style="margin:0"><span class="mk-ps-btn mk-ps-btn-lg" role="button" tabindex="0">Połącz ponownie</span></p>
+            <!-- 1. Nagłówek: sklep, plan, Rozłącz (logo i link do panelu są w czarnym pasku wyżej) -->
+            <div class="mk-ps-headrow">
+              <div class="mk-ps-headrow-t">
+                <h3 class="mk-ps-title">Kwiatowy</h3>
+                <div class="mk-ps-meta">
+                  <span class="mk-ps-pill mk-ps-pill-on">Połączono</span>
+                  <span class="mk-ps-pill mk-ps-pill-plan">Free: 50 rozmów AI miesięcznie</span>
+                  <span>mojsklep.pl</span>
+                </div>
+              </div>
+              <span class="mk-ps-btn mk-ps-btn-danger" role="button" tabindex="0">Rozłącz</span>
+            </div>
+
+            <!-- 2. Status -->
+            <div class="mk-ps-card">
+              <h4 class="mk-ps-card-h">Status</h4>
+              <p class="mk-ps-card-d">Sprawdzamy, czy widgety faktycznie pokazały się na stronie Twojego sklepu.</p>
+              <div class="mk-ps-row">
+                <div class="mk-ps-row-t"><b>Czat</b><span class="mk-ps-small">Ostatnio widziany na stronie: dzisiaj o 10:42.</span></div>
+                <span class="mk-ps-pill mk-ps-pill-on">Czat działa</span>
+              </div>
+              <div class="mk-ps-row">
+                <div class="mk-ps-row-t"><b>Wyszukiwarka</b><span class="mk-ps-small">Jeszcze jej nie widzieliśmy. Otwórz sklep w nowej karcie, żeby sprawdzić.</span></div>
+                <span class="mk-ps-pill">Jeszcze nie widziana</span>
+              </div>
+              <div class="mk-ps-actions">
+                <span class="mk-ps-btn" role="button" tabindex="0">Odśwież</span>
+                <a class="mk-ps-link" href="#">Otwórz sklep w nowej karcie</a>
+              </div>
+            </div>
+
+            <!-- 3. Widgety -->
+            <div class="mk-ps-card">
+              <h4 class="mk-ps-card-h">Widgety</h4>
+              <p class="mk-ps-card-d">Wybierz, co pokazujemy na stronie sklepu.</p>
+              <div class="mk-ps-row">
+                <label class="mk-ps-sw"><input type="checkbox" checked aria-label="Czat"><i></i></label>
+                <div class="mk-ps-row-t"><b>Czat</b><span class="mk-ps-small">Przycisk czatu w rogu każdej strony sklepu.</span></div>
+              </div>
+              <div class="mk-ps-row mk-ps-row-off">
+                <label class="mk-ps-sw"><input type="checkbox" disabled aria-label="Wyszukiwarka AsapSearch"><i></i></label>
+                <div class="mk-ps-row-t"><b>Wyszukiwarka AsapSearch</b><span class="mk-ps-small">Wyszukiwarka nie jest jeszcze gotowa, bo AsapChat nie ma Twoich produktów. <a class="mk-ps-link" href="#">Podłącz produkty w AsapChat</a></span></div>
+              </div>
+              <div class="mk-ps-row mk-ps-row-off">
+                <label class="mk-ps-sw"><input type="checkbox" checked disabled aria-label="Dodawanie do koszyka z wyszukiwarki"><i></i></label>
+                <div class="mk-ps-row-t"><b>Dodawanie do koszyka z wyszukiwarki</b><span class="mk-ps-small">Przycisk „Do koszyka” przy produktach w wynikach wyszukiwania. Działa, gdy wyszukiwarka jest włączona.</span></div>
+              </div>
+            </div>
+
+            <!-- 4. Wygląd (PATCH /settings) -->
+            <div class="mk-ps-card">
+              <h4 class="mk-ps-card-h">Wygląd</h4>
+              <p class="mk-ps-card-d">Te same ustawienia co w panelu AsapChat. Zmiana tutaj jest widoczna tam i odwrotnie.</p>
+              <div class="mk-ps-grid">
+                <div>
+                  <label class="mk-ps-label" for="mk-ps-name">Nazwa asystenta</label>
+                  <input class="mk-ps-input" id="mk-ps-name" type="text" value="Flora" maxlength="40">
+                </div>
+                <div>
+                  <label class="mk-ps-label" for="mk-ps-hex">Kolor główny</label>
+                  <div class="mk-ps-color">
+                    <input type="color" value="#6543f0" aria-label="Wybierz kolor główny">
+                    <input class="mk-ps-input mk-ps-mono" id="mk-ps-hex" type="text" value="#6543f0" maxlength="7">
+                  </div>
+                </div>
+                <div class="mk-ps-span">
+                  <span class="mk-ps-label" id="mk-ps-pos">Pozycja czatu</span>
+                  <div class="mk-ps-seg" role="radiogroup" aria-labelledby="mk-ps-pos">
+                    <label><input type="radio" name="mk-ps-position" checked><span>Prawy dolny róg</span></label>
+                    <label><input type="radio" name="mk-ps-position"><span>Lewy dolny róg</span></label>
+                  </div>
+                </div>
+                <div>
+                  <label class="mk-ps-label" for="mk-ps-g1">Powitanie 1</label>
+                  <input class="mk-ps-input" id="mk-ps-g1" type="text" value="Cześć! W czym mogę pomóc?" maxlength="120">
+                  <span class="mk-ps-hint">Do 120 znaków. Puste pole = bez dymka powitania.</span>
+                </div>
+                <div>
+                  <label class="mk-ps-label" for="mk-ps-g2">Powitanie 2</label>
+                  <input class="mk-ps-input" id="mk-ps-g2" type="text" value="Zapytaj o produkt albo status zamówienia." maxlength="120">
+                </div>
+              </div>
+            </div>
+
+            <!-- 5. Gdzie pokazywać -->
+            <div class="mk-ps-card">
+              <h4 class="mk-ps-card-h">Gdzie pokazywać</h4>
+              <p class="mk-ps-card-d">Na wykluczonych stronach nie ma ani czatu, ani wyszukiwarki.</p>
+              <div class="mk-ps-grid">
+                <div class="mk-ps-span">
+                  <label class="mk-ps-label" for="mk-ps-delay">Opóźnienie pojawienia się czatu</label>
+                  <div class="mk-ps-num">
+                    <input class="mk-ps-input" id="mk-ps-delay" type="number" min="0" max="60" value="3">
+                    <span>sekund (0 do 60)</span>
+                  </div>
+                  <span class="mk-ps-hint">0 = czat pojawia się od razu.</span>
+                </div>
+                <div>
+                  <label class="mk-ps-label" for="mk-ps-cms">Wykluczone strony CMS</label>
+                  <div class="mk-ps-chips">
+                    <span class="mk-ps-chip">Regulamin <span aria-label="Usuń">×</span></span>
+                    <span class="mk-ps-chip">Polityka prywatności <span aria-label="Usuń">×</span></span>
+                  </div>
+                  <select class="mk-ps-input" id="mk-ps-cms"><option>Dodaj stronę z listy</option><option>Dostawa</option><option>O nas</option><option>Bezpieczne płatności</option></select>
+                </div>
+                <div>
+                  <label class="mk-ps-label" for="mk-ps-cat">Wykluczone kategorie</label>
+                  <div class="mk-ps-chips">
+                    <span class="mk-ps-chip">Wyprzedaż <span aria-label="Usuń">×</span></span>
+                  </div>
+                  <select class="mk-ps-input" id="mk-ps-cat"><option>Dodaj kategorię z listy</option><option>Bukiety</option><option>Doniczki</option><option>Akcesoria</option></select>
+                </div>
+                <div>
+                  <label class="mk-ps-label" for="mk-ps-prod">Wykluczone produkty (ID)</label>
+                  <input class="mk-ps-input mk-ps-mono" id="mk-ps-prod" type="text" value="12, 48">
+                  <span class="mk-ps-hint">ID produktów po przecinku. ID znajdziesz na liście: Katalog, potem Produkty.</span>
+                </div>
+                <div>
+                  <label class="mk-ps-label" for="mk-ps-url">Adres zawiera</label>
+                  <textarea class="mk-ps-input mk-ps-mono" id="mk-ps-url">/zamowienie
+/koszyk</textarea>
+                  <span class="mk-ps-hint">Jeden fragment adresu w wierszu.</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 6. Źródło zamówień i produktów -->
+            <div class="mk-ps-card">
+              <h4 class="mk-ps-card-h">Źródło zamówień i produktów</h4>
+              <p class="mk-ps-card-d">Dzięki temu asystent zna Twoje produkty i odpowiada na pytania o status zamówienia.</p>
+              <div class="mk-ps-row">
+                <div class="mk-ps-row-t"><b>Zamówienia</b><span class="mk-ps-small">Asystent sprawdza status zamówienia klienta.</span></div>
+                <span class="mk-ps-pill mk-ps-pill-on">Podłączone</span>
+              </div>
+              <div class="mk-ps-row">
+                <div class="mk-ps-row-t"><b>Produkty</b><span class="mk-ps-small">Potrzebne do wyszukiwarki i do poleceń produktów w czacie.</span></div>
+                <span class="mk-ps-pill">Niepodłączone</span>
+              </div>
+              <div class="mk-ps-actions">
+                <span class="mk-ps-btn" role="button" tabindex="0">Podłącz w AsapChat</span>
+              </div>
+              <details class="mk-ps-fold">
+                <summary>Jak wygenerować klucz API w PrestaShop</summary>
+                <div class="mk-ps-fold-b">
+                  <ol>
+                    <li>W menu sklepu wejdź w <b>Zaawansowane</b>, potem <b>API (Webservice)</b>.</li>
+                    <li>Włącz opcję <b>Włącz usługę sieciową PrestaShop</b> i zapisz.</li>
+                    <li>Kliknij <b>Dodaj nowy klucz</b>, potem <b>Generuj</b>.</li>
+                    <li>W tabeli uprawnień zaznacz tylko kolumnę <b>GET</b> dla: <code>products</code> <code>categories</code> <code>combinations</code> <code>stock_availables</code> <code>images</code> <code>orders</code> <code>order_states</code> <code>customers</code> <code>addresses</code> <code>carriers</code>.</li>
+                    <li>Ustaw status klucza na <b>Tak</b> i zapisz.</li>
+                    <li>Skopiuj klucz, kliknij „Podłącz w AsapChat” i wklej go tam razem z adresem sklepu.</li>
+                  </ol>
+                </div>
+              </details>
+            </div>
+
+            <!-- 7. Aktualizacja (tylko gdy plugin.latest_version > wersja modułu) -->
+            <div class="mk-ps-update">
+              <div class="mk-ps-update-t">
+                <b>Dostępna wersja 1.1.0</b>
+                <span class="mk-ps-small">Masz wersję 1.0.0. Pobierz plik i wgraj go w Moduły, Menedżer modułów, „Załaduj moduł”. Połączenie i ustawienia zostają.</span>
+              </div>
+              <div class="mk-ps-update-a">
+                <span class="mk-ps-btn" role="button" tabindex="0">Pobierz asapchat.zip</span>
+                <a class="mk-ps-link" href="#">Co nowego</a>
+              </div>
+            </div>
+
+            <div class="mk-ps-save">
+              <span class="mk-ps-small">Ustawienia pobrane z AsapChat: dzisiaj o 10:40. Wersja modułu: 1.0.0.</span>
+              <span class="mk-ps-btn mk-ps-btn-main" role="button" tabindex="0">Zapisz zmiany</span>
+            </div>
           </div>
+
+          <!-- STAN 3: błąd, wymagane ponowne połączenie (401, 409, 410) -->
+          <div class="mk-ps-state mk-ps-state-3">
+            <div class="mk-ps-card mk-ps-center">
+              <span class="mk-ps-pill mk-ps-pill-err">Rozłączono</span>
+              <h3 class="mk-ps-title" style="margin-top:12px">Połącz sklep ponownie</h3>
+              <p class="mk-ps-lead">Połączenie zostało odwołane w panelu AsapChat. Czat i wyszukiwarka są teraz wyłączone na stronie sklepu.</p>
+              <div class="mk-ps-note" style="margin-top:16px">Twoje ustawienia w tym module (przełączniki, opóźnienie, wykluczenia) zostały zachowane. Wrócą po połączeniu.</div>
+              <div class="mk-ps-actions" style="margin-top:0">
+                <span class="mk-ps-btn mk-ps-btn-main" role="button" tabindex="0">Połącz ponownie</span>
+              </div>
+              <details class="mk-ps-fold">
+                <summary>Mam klucz instalacyjny</summary>
+                <div class="mk-ps-fold-b">
+                  <label class="mk-ps-label" for="mk-ps-key3">Klucz instalacyjny</label>
+                  <div class="mk-ps-keyrow">
+                    <input class="mk-ps-input mk-ps-mono" id="mk-ps-key3" type="text" placeholder="ack_..." autocomplete="off">
+                    <span class="mk-ps-btn" role="button" tabindex="0">Połącz kluczem</span>
+                  </div>
+                </div>
+              </details>
+            </div>
+          </div>
+
         </div>
       </div>
 

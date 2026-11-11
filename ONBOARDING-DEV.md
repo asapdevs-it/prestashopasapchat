@@ -4,21 +4,22 @@ Czytasz to raz, pierwszego dnia. Potem pracujesz z issues.
 
 ## 1. Co budujemy
 
-Oficjalne wtyczki AsapChat dla platform sklepowych. Każda robi trzy rzeczy: łączy sklep z kontem AsapChat, wstrzykuje skrypt czatu i wyszukiwarki, pokazuje status. Nic więcej. Pełny obraz ze wszystkimi mockami: strona planu. Link dostaniesz od Kamila.
+Oficjalne darmowe wtyczki AsapChat dla platform sklepowych. Każda: łączy sklep z kontem AsapChat, wstawia skrypt czatu i wyszukiwarki, daje ustawienia (wygląd, wykluczenia, opóźnienie), pokazuje status i źródło zamówień oraz produktów. Pełny obraz ze wszystkimi mockami: strona planu. Link dostaniesz od Kamila.
 
-Repozytoria (organizacja `asapdevs-it`):
+Repozytoria (organizacja `asapdevs-it`), w kolejności prac:
 
-| Repo | Platforma | Fala |
+| Nr | Repo | Gdzie trafia |
 |---|---|---|
-| `woocommerce-asapchat` | WordPress.org (slug `asapchat`) | 1 |
-| `asapchat-gtm-template` | Google Tag Manager, galeria szablonów | 1 |
-| `prestashopasapchat` | PrestaShop (moduł `asapchat`) | 2 |
-| `asapchat-magento` | Magento 2, moduł Composer | 2 |
-| `asapchat-shoper` | Shoper App Store | 3, bramka |
-| `asapchat-shopify` | Shopify App Store | 3, bramka |
-| `asapchat` | backend (kontrakt „Połącz”), bez dostępu dla wtyczkowców | P |
+| 1 | `woocommerce-asapchat` | katalog WordPress.org (slug `asapchat`) |
+| 2 | `prestashopasapchat` | zip do pobrania (GitHub Releases, link w panelu AsapChat), bez Addons |
+| 3 | `asapchat-shopify` | Shopify App Store, aplikacja darmowa |
+| 4 | `asapchat-gtm-template` | galeria szablonów Google Tag Manager |
+| 5 | `asapchat-shoper` | Shoper App Store, aplikacja darmowa |
+| później | `asapchat-magento` | odłożone, nie zaczynamy |
 
-„Bramka” znaczy: nie piszemy kodu, dopóki platforma nie odpowie na piśmie na pytania z `docs/accounts.md`.
+Backend (`asapchat`) prowadzi Kamil. Kontrakt jest gotowy i opisany w `docs/CONNECT-API.md`. Nie masz dostępu do repo backendu i go nie potrzebujesz: punkt 7 kontraktu mówi, jak testować.
+
+Nie wysyłamy pytań do supportów platform. Spełniamy opublikowane wymagania i zgłaszamy darmową wtyczkę.
 
 ## 2. Kolejność czytania w repo
 
@@ -55,10 +56,11 @@ npx skills add https://github.com/open-mercato/skills.git --skill '*'
 
 ## 5. Zasady, których nie łamiemy
 
-- Zakres v1 to trzy funkcje. Pomysł na czwartą: nowe issue, nie dodatkowy kod w PR.
+- Zakres v1 to to, co jest w specu. Pomysł na coś więcej: nowe issue, nie dodatkowy kod w PR.
 - Żadnych sekretów w repo: tokenów, haseł, kluczy API, danych klientów. Dane dostępowe do kont wydawcy trzymamy w firmowym menedżerze haseł.
 - Żadnych endpointów diagnostycznych, które coś zwracają bez autoryzacji.
-- Kod prototypu (gałąź `legacy`, a w dwóch starszych repo także stare pliki na `main`, dopóki nie usunie ich pierwsze issue) służy tylko do wglądu. Nie kopiujemy z niego niczego.
+- Gałąź `legacy` to archiwum starego prototypu. Nikt go nie używa, nie kopiujemy z niego niczego.
+- Ekrany wtyczki mają logo AsapChat i wygląd panelu AsapChat (tokeny w specu i mockach), nie natywny formularz platformy. Wyjątek: Shopify (Polaris).
 - Teksty dla użytkownika: po polsku forma „Ty”, bez pauz (znaku —), krótko. Wersja angielska obowiązkowa tam, gdzie wymaga jej katalog.
 - Zanim zaczniesz konto wydawcy na platformie, przeczytaj `docs/accounts.md`. Każde konto ma dać Kamilowi dostęp tak wcześnie, jak platforma pozwala. Jak dokładnie, mówi `docs/accounts.md`.
 
